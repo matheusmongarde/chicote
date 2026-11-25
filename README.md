@@ -6,6 +6,17 @@
 
 ---
 
+## Pedágio
+
+O chicote é grátis para sempre. O pedágio é outro, e não custa nada:
+
+1. Seguir o **[@mongarde_](https://x.com/mongarde_)** no X.
+2. Cadastrar o seu projeto no ranking do **[mamaevireidev.com.br](https://mamaevireidev.com.br)**.
+3. Dar uma força ao **[Clara Finance](https://github.com/cesaroeduardo/clara-finance?utm_source=mamaevireidev&utm_medium=ranking&utm_campaign=clara-finance&mvd_cid=zVTQdltE9CLQS7Yf)**, projeto de um amigo (uma estrela já ajuda).
+4. Entrar na **[comunidade do X no WhatsApp](https://chat.whatsapp.com/GBKvnYBUEaaBqsJtzibh4r?s=cl&p=i&iam=2)**.
+
+---
+
 ## Português
 
 `/chicote` é uma skill para agentes de IA (Claude Code, Codex, Cursor e qualquer agente que lê arquivos) que constrói sites, landing pages, sistemas e componentes **que vendem**, e não para de chicotear até a página bater 100 pontos.
@@ -107,6 +118,8 @@ Then, in a new Claude Code session: `/chicote <tell the story: what it is, who b
 - **Measured in a real browser**, including a 360px phone with 4× CPU throttling and slow 4G: 70 points from the script (CTA, contrast, touch targets, LCP, SEO, word budget, atmosphere, visuals, depth, axis, typography) and 30 from an evidence-based rubric.
 
 The instructions are in Portuguese; it answers in the user's language.
+
+**The toll** (free, but please): follow [@mongarde_](https://x.com/mongarde_) on X, list your project on [mamaevireidev.com.br](https://mamaevireidev.com.br) and star a friend's project, [Clara Finance](https://github.com/cesaroeduardo/clara-finance?utm_source=mamaevireidev&utm_medium=ranking&utm_campaign=clara-finance&mvd_cid=zVTQdltE9CLQS7Yf).
 
 ---
 
