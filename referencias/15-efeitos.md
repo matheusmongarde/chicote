@@ -43,7 +43,7 @@ Veja todos funcionando em `exemplos/efeitos.html`.
 | Engenharia | `holofote.css` com malha milimetrada, `revelar.js` nas cotas |
 | Arquitetura | `camadas.css` (maquete), `revelar.js` (planta se desenhando) |
 | Luxo, estética, joalheria | `inclinacao.js` com reflexo no card de oferta, `grao.css` |
-| Serviço local para idoso | nenhum com movimento; `grao.css` no máximo |
+| Serviço local para idoso | fotos reais tratadas + efeitos na versão estática (maquete parada, grão, traço já desenhado); nada se mexendo sozinho |
 
 ## Escreva no `composicao.md`
 

@@ -52,7 +52,7 @@ Leia `referencias/17-atmosfera-e-profundidade.md` e `referencias/18-nivel-de-ref
 ### 0. Prepare as ferramentas (uma vez por máquina)
 
 ```bash
-cd <pasta desta skill> && npm install && npx playwright install chromium
+cd <pasta desta skill> && npm install && npm run instalar
 ```
 
 Os scripts ficam em `scripts/`. Se não der para rodar Node, siga o processo mesmo assim e diga claramente quais medições ficaram sem fazer.

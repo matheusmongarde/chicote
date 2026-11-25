@@ -27,7 +27,7 @@ O `medidas.mjs` usa estes valores. Os números da coluna "por quê" são o que v
 | Peso da página (primeira carga) | ≤ 700 KB | ≤ 1,2 MB | ≤ 2 MB |
 | JavaScript | ≤ 120 KB | ≤ 250 KB | ≤ 450 KB |
 | LCP alvo (no perfil lento da chicotada) | ≤ 2,5 s | ≤ 2,5 s | ≤ 2,5 s |
-| 3D / WebGL | proibido (imagem estática) | só com imagem de reserva e carregamento sob demanda | permitido com reserva |
+| 3D / WebGL | versão estática (CSS 3D parado ou imagem), nunca WebGL | só com imagem de reserva e carregamento sob demanda | permitido com reserva |
 | Vídeo de fundo | proibido | proibido no celular | só com `poster` e sem autoplay com som |
 | Efeitos (blur, backdrop-filter grande, sombra animada) | evitar | com moderação | ok |
 
