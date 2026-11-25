@@ -60,8 +60,8 @@ Não deixe tudo encostado à esquerda por inércia. Escolha o **eixo** de cada c
 
 | Eixo | Quando | Por quê |
 |---|---|---|
-| Centro | hero de uma frase só, chamada final, preço único | simetria = decisão, foco total |
-| Esquerda | texto de leitura, listas, formulários | o olho volta sempre ao mesmo ponto de partida; leitura mais rápida |
+| Centro (**padrão para cards e botões**) | hero de uma frase só, chamada final, preço, todo card e todo botão | simetria = decisão, foco total. Card e botão encostados à esquerda reprovam no portão `eixo` |
+| Esquerda | coluna de texto ao lado de um visual (a exceção: texto à esquerda + card/visual à direita), formulários | o olho volta ao mesmo ponto de partida; o visual à direita equilibra o peso |
 | Direita | números, preços, datas em tabela | alinha as casas decimais |
 | Diagonal / escada | passo a passo, evolução, antes → depois | o olho desce em Z e "sente" o avanço |
 | Assimétrico (7/5, texto de um lado, imagem sangrando do outro) | hero com produto ou foto forte | tensão visual, a imagem prova e o texto vende |

@@ -31,7 +31,7 @@ O `medidas.mjs` usa estes valores. Os números da coluna "por quê" são o que v
 | Vídeo de fundo | proibido | proibido no celular | só com `poster` e sem autoplay com som |
 | Efeitos (blur, backdrop-filter grande, sombra animada) | evitar | com moderação | ok |
 
-O mesmo site atende os três. Projete para o **fraco** e melhore progressivamente para o forte (`@media (min-width)`, `prefers-reduced-motion: no-preference`, `navigator.connection` quando houver).
+Aparelho fraco **não** é desculpa para página sem foto, sem atmosfera ou sem profundidade: gradiente e sombra custam zero bytes, foto de 640px custa ~60 KB, e efeito com movimento vira a versão estática. O mesmo site atende os três. Projete para o **fraco** e melhore progressivamente para o forte (`@media (min-width)`, `prefers-reduced-motion: no-preference`, `navigator.connection` quando houver).
 
 ## O polegar
 

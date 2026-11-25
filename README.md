@@ -21,9 +21,11 @@ Ela não confia no gosto do modelo. Ela **mede**. É por isso que funciona até 
 5. **Justifica a posição de cada elemento** com Fitts, Hick, escala modular, grade de 12 e peso visual. Os egípcios e Leonardo da Vinci entram como método, não como enfeite.
 6. **Costura uma seção na outra.** Nada de linha cinza separando faixas. Um elemento atravessa a borda, a borda tem a forma do nicho, uma pergunta no fim de uma seção é respondida no título da próxima. O cabeçalho tem comportamento escolhido (some, encolhe, vira barra de ação, mora embaixo) e o rodapé é o último capítulo: carimbo de engenharia, comanda de restaurante, placa da porta da barbearia.
 7. **Compõe os cards em vez de enfileirar.** Pilha deslocada, leque, escada, bento com hierarquia, quebra-grade, órbita, baralho em rolagem. O mais importante é maior.
-8. **Desenha quando a imagem não serve.** Campo de pontos que reage ao dedo, holofote na malha, card que inclina em 3D, maquete só de CSS, traço que se desenha, grão de papel. Cada efeito tem menos de 3 KB, para fora da tela e tem versão estática para quem pede menos movimento.
-9. **Mede num navegador de verdade** a 360×640 com CPU 4× mais lenta e 4G ruim. Confere CTA na primeira tela, contraste, alvo de toque, fonte, LCP, CLS, peso, SEO, movimento e **texto**: conta as palavras de cada seção e caça jargão ("soluções completas", "eleve seu negócio", "saiba mais").
-10. **Chicoteia até 100.** São 60 pontos medidos pelo script e 40 numa rubrica em que cada ponto exige evidência. Máximo de 5 rodadas. Se não chegar, diz o que falta, sem maquiar.
+8. **Não aceita página pobre.** O piso é o nível das melhores landing pages de produto: moldura em painéis, fonte de título de verdade, hero com uma peça visual forte, cards que mostram alguma coisa e fotos com um só tratamento. Fundo chapado, fonte do sistema, botão sem relevo e card encostado à esquerda perdem ponto no script.
+9. **Sem imagem, entrega o prompt.** Cada imagem que falta vira um prompt pronto para ChatGPT, Gemini ou Midjourney, em camadas quando a cena passa na frente do produto, e a página ganha uma reserva bonita enquanto isso.
+10. **Desenha quando a imagem não serve.** Campo de pontos que reage ao dedo, holofote na malha, card que inclina em 3D, maquete só de CSS, traço que se desenha, grão de papel. Cada efeito tem menos de 3 KB, para fora da tela e tem versão estática para quem pede menos movimento.
+11. **Mede num navegador de verdade** a 360×640 com CPU 4× mais lenta e 4G ruim. Confere CTA na primeira tela, contraste, alvo de toque, fonte, LCP, CLS, peso, SEO, movimento e **texto**: conta as palavras de cada seção e caça jargão ("soluções completas", "eleve seu negócio", "saiba mais").
+12. **Chicoteia até 100.** São 70 pontos medidos pelo script e 30 numa rubrica em que cada ponto exige evidência. Máximo de 5 rodadas. Se não chegar, diz o que falta, sem maquiar.
 
 ### Instalar
 
@@ -59,22 +61,19 @@ Em `exemplos/` há três páginas (`npm run teste` roda as três):
 
 | Página | Nota | Por quê |
 |---|---|---|
-| `ruim.html` | **34,7/100** | texto ilegível (33 abaixo de 3:1), botão de 13px, zoom bloqueado, animação infinita, 12 jargões, três cards com emoji |
-| `barbearia.html` | **100/100** | público idoso, celular fraco, ~10 KB; a placa do combo atravessa a listra do poste e sobe no hero; o ritual começa numa dobra de toalha; o rodapé é a placa da porta com "aberto agora" |
-| `efeitos.html` | **60/60** nos portões | os 6 efeitos funcionando a 60 quadros por segundo, sem estourar peso nem LCP |
+| `ruim.html` | **32,6/70** nos portões | fundo chapado, nenhuma imagem, fonte do sistema, botão chapado, texto ilegível, 12 jargões, três cards com emoji |
+| `barbearia.html` | **100/100** | no nível das landing pages de referência: painéis com moldura, Instrument Serif grande, a agenda do WhatsApp, a foto e o recibo "emergindo" do hero, bento com fotos tratadas, pódio de preços, cena final. Prompts das imagens próprias em `barbearia-prompts.md` |
+| `efeitos.html` | **70/70** nos portões | os 6 efeitos funcionando a 60 quadros por segundo |
 
-A barbearia não chegou a 100 de primeira, e vale ler o porquê. O script reprovou um texto em 6,63:1 (o público idoso pede 7:1). Os prints mostraram o título em 4 linhas e o preço mais completo no menor card, ou seja, hierarquia invertida. Foram 4 rodadas, e a fórmula do título ganhou dois fatores reais no caminho (largura da serifada em negrito e a perda de quebrar em palavras inteiras).
-
-Depois disso, a barbearia passou por mais uma rodada com costuras, cabeçalho e rodapé. Os portões pegaram o texto legal em 13px (o mínimo do idoso é 15) e uma seção acima do orçamento de palavras.
-
-Próximo passo do exemplo: uma foto real da cadeira. Prompt para quem não tiver: *"cadeira de barbeiro antiga de couro escuro numa barbearia com azulejo creme, luz quente lateral da janela à esquerda, enquadramento 4:5 com espaço vazio à esquerda, fotografia realista, sem pessoas, sem texto"*.
+A barbearia foi refeita três vezes até chegar aqui. A primeira versão era chapada, "folha de Word". Foi daí que nasceram as ordens diretas e os portões de gosto: atmosfera, visual, profundidade, eixo e tipografia. Hoje a primeira versão tiraria menos de 50.
 
 ### Estrutura
 
 ```
 SKILL.md              o processo, em 9 passos
-referencias/          16 arquivos lidos sob demanda (história, composição, metáfora, público, conversão, costuras,
-                      cabeçalho e rodapé, efeitos, composições de cards…)
+referencias/          19 arquivos lidos sob demanda (história, composição, metáfora, público, conversão, costuras,
+                      cabeçalho e rodapé, efeitos, composições de cards, atmosfera,
+                      o nível de referência, prompts de imagem…)
 efeitos/              pontos, holofote, inclinação 3D, maquete em CSS, traço e grão, prontos para colar
 scripts/medidas.mjs   público e aparelho viram tokens CSS com o porquê de cada número
 scripts/chicotada.mjs auditoria num Chromium de verdade, nota de 0 a 60 + rubrica
@@ -100,7 +99,9 @@ It doesn't trust the model's taste. It **measures**, which is why it works even 
 - **Cards are composed** (offset stack, fan, staircase, hierarchical bento, grid-break), never three identical boxes.
 - **Code-drawn effects instead of stock photos**: a dot field that reacts to touch, a spotlight grid, 3D tilt, a CSS-only model. Each is under 3 KB, pauses off-screen and respects reduced motion.
 - **Measured in a real browser** at 360×640 with 4× CPU throttling and slow 4G: CTA above the fold, contrast, tap targets, font size, LCP, CLS, weight, SEO, reduced motion, word budget and jargon.
-- **Whipped until 100.** 60 points are measured by the script; 40 come from a rubric where every point needs evidence. Max 5 rounds, with no fake scores.
+- **A quality floor.** Pages must reach the level of the best product landing pages: framed panels, a real display typeface, a strong hero visual, cards that show something, one color treatment for every photo. Flat backgrounds, system fonts, flat buttons and left-hugging cards lose points.
+- **No image? It writes the prompt**, layered when the scene passes in front of the product.
+- **Whipped until 100.** 70 points are measured by the script; 30 come from a rubric where every point needs evidence. Max 5 rounds, with no fake scores.
 
 The skill's instructions are in Portuguese; it answers in the user's language.
 

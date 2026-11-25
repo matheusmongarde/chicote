@@ -9,7 +9,7 @@ Imagem é prova ou atmosfera. Se não é nenhuma das duas, é peso.
 | Negócio de serviço local (barbearia, clínica, restaurante) | alta: foto real do lugar, da equipe, do resultado permitido |
 | SaaS / ferramenta | a tela real do produto vale mais que qualquer foto |
 | Profissional liberal (advogado, contador, engenheiro) | baixa: retrato real + tipografia forte |
-| Aparelho `fraco` | no máximo 1 imagem acima da dobra, o resto sob demanda (`loading="lazy"`) |
+| Aparelho `fraco` | as mesmas 3 peças visuais no mínimo, mas comprimidas (640px), só 1 acima da dobra e o resto com `loading="lazy"`. Aparelho fraco muda o peso da foto, nunca tira a foto |
 
 Ordem de preferência: **foto real do cliente > tela real do produto > foto gerada com prompt bem feito > banco de imagem**. Banco de imagem com pessoa nunca entra como se fosse o profissional ou o cliente.
 

@@ -1,45 +1,14 @@
 {
   "nota": "Exemplo fictício: a barbearia, as avaliações e o telefone não existem. Num projeto real, a prova precisa ser real.",
   "itens": [
-    {
-      "id": "hero-frase",
-      "pontos": 7,
-      "evidencia": "h1 'Barba feita em 30 minutos, sem fila.' · 7 palavras · 3 linhas a 360px (print 360-dobra.png) com 39px = (328×3)÷(36×0,6×1,15) · específica (30 min; o bairro está no cabeçalho), concreta (30 minutos), do cliente (sem fila), sem jargão. A primeira versão tinha 4 linhas e foi reprovada"
-    },
-    {
-      "id": "roteiro",
-      "pontos": 5,
-      "evidencia": "3 capítulos e o rodapé: hero (fisgar + CTA), placas de preço (objeção preço), ritual (confiança), placa da porta (onde, quando + CTA final). Nenhum repetido. CTA no hero, no rodapé e na barra fixa que aparece quando o CTA do hero sai da tela"
-    },
-    {
-      "id": "metafora",
-      "pontos": 5,
-      "evidencia": "balcão de navalha: preços em placas esmaltadas chanfradas (.placa clip-path), o combo maior e o único verde (composição quebra-grade, área maior = mais importante), ritual em escada deslocada 1/6 por degrau, rodapé = placa da porta com aberto/fechado"
-    },
-    {
-      "id": "composicao",
-      "pontos": 5,
-      "evidencia": "tokens de medidas.mjs idoso/fraco --letra 0.6 (19px, razão 1,2, alvo 52/56, 7:1, título 39–61px); hero 7/5 no desktop, peso 1 = h1, peso 2 = CTA verde, prova 4,9 dentro da dobra a 360px; placas: h2 1–7, combo 9–12 em duas linhas da grade, avulsas 1–4 e 5–8"
-    },
-    {
-      "id": "costuras",
-      "pontos": 5,
-      "evidencia": "1→2: a placa do combo sobe 160px e atravessa a listra do poste até o hero (print 1440-inteira.png); 2→3: pergunta-ponte 'E como é feita a barba?' → 'O ritual, do jeito antigo.'; 3→4: o ritual começa numa dobra de toalha (clip-path) e a placa da porta sobe 96px por cima do fim dele. Cabeçalho estático (página de 3 telas, sem menu, Hick) com o estado 'Aberto agora · até 20h', que quem vem do Maps procura. Rodapé em 3 camadas: chamada 'Sua cadeira, no seu horário.' + CTA, horário/endereço/rota, legal em <small>"
-    },
-    {
-      "id": "copy",
-      "pontos": 4,
-      "evidencia": "portão enxuto 4/4, jargão nenhum; botões dizem a ação: 'Marcar pelo WhatsApp', 'Ligar (19) 99812-4471', 'Ver a rota no mapa', 'Marcar meu horário'; títulos são frases"
-    },
-    {
-      "id": "publico",
-      "pontos": 5,
-      "evidencia": "idoso: corpo 19px, alvos 52–56px (portão alvos 100%), contraste 7:1 em todos os textos, telefone escrito por extenso no botão, sem menu escondido, sem carrossel, foco 3px, barra fixa embaixo (polegar), horário em lista legível"
-    },
-    {
-      "id": "imagem",
-      "pontos": 4,
-      "evidencia": "aparelho fraco: zero imagens, página em ~10 KB; a atmosfera vem da serifa, das placas e da listra em CSS. Próximo passo com prompt entregue no README: foto real da cadeira (node scripts/pexels.mjs --busca 'barber chair warm light' como reserva)"
-    }
+    { "id": "nivel", "pontos": 6, "evidencia": "teste do nível (print 1440-inteira.png ao lado das referências): 1) Instrument Serif 100px, −0,03em, itálico de duas cores no h1; 2) hero com produto emergindo: agenda, foto e recibo ligados ao CTA por linhas finas, saindo do fundo do painel; 3) as 5 fotos com o mesmo tratamento (.foto: sépia, contraste, véu âmbar); 4) cards mostram: horários, recibo, fotos do ritual, preço; 5) moldura em painéis de 28px, pílulas, padrão de pontos, faixa de números com divisórias, cabeçalho dividido" },
+    { "id": "hero-frase", "pontos": 4, "evidencia": "h1 'Barba feita em 30 minutos, sem fila.': 7 palavras, concreta (30 min), do cliente (sem fila), sem jargão; 3 linhas a 360px (print 360-dobra.png)" },
+    { "id": "roteiro", "pontos": 3, "evidencia": "hero (fisgar) → palco (como marca: horários, prova visual, preço) → números (prova) → ritual (confiança) → declaração (virada) → preços (oferta + CTA) → cena final (onde, quando + CTA). CTA no hero, no pódio, na cena final e na barra fixa do celular" },
+    { "id": "metafora", "pontos": 4, "evidencia": "balcão de navalha: poste listrado na marca, recibo com linha pontilhada no palco, horários como fichas de agenda, preços em pódio com o combo escuro e maior no centro (composição: pódio + bento com hierarquia 1 grande + 2 pequenos)" },
+    { "id": "composicao", "pontos": 3, "evidencia": "eixo central em todo o hero e nos cards; cabeçalhos divididos 7/5 no desktop (exceção texto à esquerda + parágrafo à direita); pódio 1fr auto 1fr com o destaque 28px mais alto; bento 1,4fr/1fr com o bloco 1 em duas linhas" },
+    { "id": "costuras", "pontos": 3, "evidencia": "hero → palco: mesmo painel, o CTA desce em fios até as três peças; palco → números: as peças saem 40px para fora do painel; ritual → declaração → preços: alternância claro/vinho/claro; cena final com foto e véu; cabeçalho na página acima do painel, como as referências" },
+    { "id": "copy", "pontos": 2, "evidencia": "portão enxuto 3/3, zero jargão; botões: 'Marcar pelo WhatsApp', 'Ver os preços', 'Marcar cabelo e barba', 'Marcar meu horário', 'Ver a rota'" },
+    { "id": "publico", "pontos": 2, "evidencia": "geral/médio: corpo 17px, alvos ≥ 44px (portão 100%), contraste AA em todos os textos, barra fixa no polegar no celular, telefone no 'Ligar'" },
+    { "id": "imagem", "pontos": 3, "evidencia": "5 fotos do Pexels com um só tratamento, alt descritivo, lazy fora da dobra, fetchpriority na do hero; prompts das imagens próprias em barbearia-prompts.md (4 vagas, incluindo o hero em camadas)" }
   ]
 }

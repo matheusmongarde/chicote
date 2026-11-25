@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * chicotada.mjs: mede a página num Chromium de verdade e dá a nota dos portões (60 pontos).
+ * chicotada.mjs: mede a página num Chromium de verdade e dá a nota dos portões (70 pontos).
  *
  *   node scripts/chicotada.mjs <url | arquivo.html> [--publico idoso] [--aparelho fraco] [--saida chicote/chicotada]
  *                              [--rubrica chicote/chicotada/rubrica.json] [--so-hero]
@@ -25,7 +25,7 @@ const opt = (k, d) => {
   return v === undefined || v.startsWith("--") ? true : v;
 };
 if (!alvoArg || opt("ajuda")) {
-  console.log("uso: node scripts/chicotada.mjs <url | arquivo.html> [--publico geral|idoso|jovem|b2b|tecnico] [--aparelho fraco|medio|forte] [--saida pasta] [--rubrica rubrica.json] [--so-hero]");
+  console.log("uso: node scripts/chicotada.mjs <url | arquivo.html> [--publico geral|idoso|jovem|b2b|tecnico] [--aparelho fraco|medio|forte] [--saida pasta] [--rubrica rubrica.json] [--so-hero] [--tipo venda-direta|contato|cadastro|sistema]");
   process.exit(alvoArg ? 0 : 1);
 }
 
@@ -38,6 +38,7 @@ if (!P || !A) {
   process.exit(1);
 }
 const soHero = !!opt("so-hero", false);
+const tipo = opt("tipo", "contato"); // venda-direta | contato | cadastro | sistema
 const saida = path.resolve(opt("saida", "chicote/chicotada"));
 fs.mkdirSync(saida, { recursive: true });
 const url = /^https?:|^file:/.test(alvoArg) ? alvoArg : pathToFileURL(path.resolve(alvoArg)).href;
@@ -254,7 +255,109 @@ function medirNaPagina({ alvoMin, corpoMin, minimo, contrasteMin, limiteHero, li
     cabecalho = { altura: Math.round(r.height), fixo: p === "fixed" || p === "sticky", temCta: !!cab.querySelector("[data-cta], a[href^='tel:'], a[href*='wa.me']"), menuEscondido: !!cab.querySelector("[aria-expanded], .hamburguer, .menu-toggle, button[aria-controls]") };
   }
 
+
+  // ── atmosfera: o capítulo tem camada visual (gradiente, imagem, textura) ou é chapado?
+  const ricoFundo = (el) => {
+    for (const pseudo of [null, "::before", "::after"]) {
+      const st = getComputedStyle(el, pseudo);
+      if (pseudo && (st.content === "none" || st.content === "normal")) continue;
+      if (st.backgroundImage && st.backgroundImage !== "none") return true;
+    }
+    const r = el.getBoundingClientRect();
+    const area = r.width * r.height || 1;
+    return [...el.querySelectorAll("img, canvas, video, svg, picture")].some((m) => { const q = m.getBoundingClientRect(); return visivel(m) && (q.width * q.height) / area >= 0.25; });
+  };
+  const ricoComPais = (el) => { for (let n = el; n && n !== document.documentElement; n = n.parentElement) if (ricoFundo(n)) return true; return ricoFundo(document.documentElement); };
+  const blocosAtm = [...capitulos, ...document.querySelectorAll("footer")].filter(visivel);
+  const atmosfera = { total: blocosAtm.length, ricos: blocosAtm.filter(ricoComPais).length, chapados: blocosAtm.filter((b) => !ricoComPais(b)).map((b) => sel(b).slice(0, 60)) };
+
+  // ── visual: fotos reais, canvas, 3D em CSS ou SVG grande
+  const midias = [];
+  for (const m of document.querySelectorAll("img, canvas, svg, video, [data-pontos], *")) {
+    if (!visivel(m)) continue;
+    const r = m.getBoundingClientRect();
+    const st = getComputedStyle(m);
+    let tipo = null;
+    if (m.tagName === "IMG" && (m.naturalWidth >= 600 || r.width >= 240)) tipo = "foto";
+    else if (m.tagName === "VIDEO" && r.width >= 240) tipo = "vídeo";
+    else if (m.tagName === "CANVAS" && r.width >= 200 && r.height >= 150) tipo = "canvas";
+    else if (m.tagName === "svg" && r.width >= 200 && r.height >= 150) tipo = "svg";
+    else if (st.transformStyle === "preserve-3d" || (st.perspective !== "none" && m.children.length)) tipo = "3d";
+    else if (/repeating-linear-gradient|radial-gradient/.test(st.backgroundImage) && r.width >= 40 && r.height >= 160 && m.children.length === 0 && !m.closest("[data-chicote-3d-visto]")) tipo = "3d";
+    if (tipo) { midias.push({ tipo, el: sel(m).slice(0, 50), naDobra: r.top < vh && r.bottom > 0 && r.top + scrollY < vh }); if (tipo === "3d") m.dataset.chicote3dVisto = 1; }
+    if (midias.length > 40) break;
+  }
+
+  // ── profundidade: sombras em camadas e CTA com relevo
+  const camadas = (bs) => (bs && bs !== "none" ? bs.split(/,(?![^(]*\))/).length : 0);
+  const comProfundidade = [...document.querySelectorAll("body *")].filter((e) => visivel(e) && camadas(getComputedStyle(e).boxShadow) >= 2);
+  const ctaEl = document.querySelector('[data-cta="principal"]') || document.querySelector("[data-cta]");
+  const ctaRelevo = !!ctaEl && (camadas(getComputedStyle(ctaEl).boxShadow) >= 1 || /gradient/.test(getComputedStyle(ctaEl).backgroundImage));
+  const profundidade = { elementos: comProfundidade.length, ctaRelevo };
+
+  // ── eixo: card e botão centralizados no seu contêiner, ou à direita com texto à esquerda (exceção)
+  const fundoProprio = (e) => { const c = parse(getComputedStyle(e).backgroundColor); return (c && c.a > 0.05) || getComputedStyle(e).backgroundImage !== "none"; };
+  const ehCard = (e) => {
+    if (/^(IMG|FIGURE|PICTURE|svg|CANVAS|A|BUTTON|HEADER|FOOTER|MAIN|SECTION|NAV|BODY|HTML)$/.test(e.tagName)) return false;
+    const r = e.getBoundingClientRect(), pai = e.parentElement?.getBoundingClientRect();
+    if (!pai || r.height < 90 || r.width < 160) return false;
+    const st = getComputedStyle(e);
+    const raio = parseFloat(st.borderTopLeftRadius) || 0;
+    return raio >= 8 && (fundoProprio(e) || camadas(st.boxShadow) >= 1) && r.width <= pai.width * 0.88 && (e.innerText || "").trim().length > 8 && !e.querySelector("img") ;
+  };
+  const centradoNoPai = (e) => {
+    let pai = e.parentElement;
+    while (pai && pai.getBoundingClientRect().width <= e.getBoundingClientRect().width + 2) pai = pai.parentElement;
+    if (!pai) return true;
+    const r = e.getBoundingClientRect(), p = pai.getBoundingClientRect();
+    const desvio = Math.abs((r.left + r.width / 2) - (p.left + p.width / 2)) / p.width;
+    if (desvio <= 0.08) return true;
+    // exceção espelhada: botão na coluna de texto (com título) e um visual/card na coluna da direita
+    for (let n = e.parentElement, i = 0; n && i < 5; n = n.parentElement, i++) {
+      if (!n.querySelector("h1,h2")) continue;
+      const nr = n.getBoundingClientRect();
+      const vizinho = [...(n.parentElement?.children || [])].some((x) => x !== n && visivel(x) && x.getBoundingClientRect().left >= nr.right - 4 && x.getBoundingClientRect().width > 120);
+      if (vizinho) return true;
+      break;
+    }
+    // exceção: está na metade direita e há texto relevante à esquerda dele
+    if (r.left + r.width / 2 > p.left + p.width / 2) {
+      const irmaoTexto = [...pai.querySelectorAll("h1,h2,h3,p")].some((t) => { const q = t.getBoundingClientRect(); return visivel(t) && q.right <= r.left + 4 && q.bottom > r.top - 200 && q.top < r.bottom + 200; });
+      if (irmaoTexto) return true;
+    }
+    // em grade de vários itens lado a lado (pódio, bento), o grupo é que precisa estar centrado
+    const irmaos = [...e.parentElement.children].filter((x) => x !== e && visivel(x) && Math.abs(x.getBoundingClientRect().top - r.top) < r.height);
+    if (irmaos.length) {
+      const todos = [e, ...irmaos].map((x) => x.getBoundingClientRect());
+      const esq = Math.min(...todos.map((q) => q.left)), dir = Math.max(...todos.map((q) => q.right));
+      const pp = e.parentElement.getBoundingClientRect();
+      return Math.abs((esq + dir) / 2 - (pp.left + pp.width / 2)) / pp.width <= 0.08;
+    }
+    return false;
+  };
+  const cards = [...document.querySelectorAll("body *")].filter((e) => visivel(e) && ehCard(e)).filter((e, _, arr) => !arr.some((o) => o !== e && o.contains(e)));
+  const ctas = [...document.querySelectorAll("[data-cta]")].filter((e) => visivel(e) && !e.closest("nav") && getComputedStyle(e).position !== "fixed" && !e.closest('[style*="position: fixed"]'));
+  const alvosEixo = [...new Set([...cards, ...ctas])].filter((e) => { for (let n = e; n; n = n.parentElement) if (getComputedStyle(n).position === "fixed") return false; return true; });
+  const fora = alvosEixo.filter((e) => !centradoNoPai(e));
+  const cardsEsquerda = cards.filter((c) => { const ps = [...c.querySelectorAll("h2,h3,h4,p")].filter(visivel); return ps.length && ps.every((t) => getComputedStyle(t).textAlign === "left" || getComputedStyle(t).textAlign === "start"); });
+  const eixo = { total: alvosEixo.length, centrados: alvosEixo.length - fora.length, fora: fora.map((e) => sel(e).slice(0, 60)), cardsTextoEsquerda: cardsEsquerda.map((e) => sel(e).slice(0, 60)), cards: cards.length };
+
+
+  // ── tipografia: fonte de título de verdade, grande e apertada
+  const genericas = /^(system-ui|-apple-system|blinkmacsystemfont|segoe ui|roboto|arial|helvetica|helvetica neue|georgia|times|times new roman|serif|sans-serif|ui-sans-serif|ui-serif|verdana|tahoma)$/i;
+  const tit = document.querySelector("h1");
+  let tipografia = null;
+  if (tit && visivel(tit)) {
+    const st = getComputedStyle(tit);
+    const primeira = st.fontFamily.split(",")[0].replace(/["']/g, "").trim();
+    const carregada = [...document.fonts].some((f) => f.status === "loaded" && f.family.replace(/["']/g, "").trim().toLowerCase() === primeira.toLowerCase());
+    const px = parseFloat(st.fontSize);
+    const ls = st.letterSpacing === "normal" ? 0 : parseFloat(st.letterSpacing) / px;
+    const lh = st.lineHeight === "normal" ? 1.2 : parseFloat(st.lineHeight) / px;
+    tipografia = { fonte: primeira, propria: !genericas.test(primeira) && carregada, px: Math.round(px), aperto: +ls.toFixed(3), entrelinha: +lh.toFixed(2) };
+  }
   return {
+    tipografia, atmosfera, midias, profundidade, eixo,
     texto, jargao, cabecalho,
     rolagemLateral: document.documentElement.scrollWidth > vw + 1,
     larguraDoc: document.documentElement.scrollWidth,
@@ -311,6 +414,11 @@ async function medirAparelho(browser, ap, reduzir = false) {
   const m = await page.evaluate(medirNaPagina, { alvoMin: ap.movel ? P.alvo : Math.min(P.alvo, 32), corpoMin: P.corpo - (publico === "geral" ? 1 : 0), minimo: P.minimo, contrasteMin: P.contraste, limiteHero: LIMITE_HERO, limiteSecao: LIMITE_SECAO });
   if (!soHero) {
     // elementos fixos (barra de contato, cabeçalho fixo) apareceriam no meio do print da página inteira
+    // imagens com loading="lazy" só carregam perto da tela: carregue todas antes do print inteiro
+    await page.evaluate(async () => {
+      document.querySelectorAll('img[loading="lazy"]').forEach((i) => (i.loading = "eager"));
+      await Promise.all([...document.images].filter((i) => !i.complete).map((i) => new Promise((r) => { i.onload = i.onerror = r; setTimeout(r, 4000); })));
+    });
     const ocultos = await page.evaluate(() => [...document.querySelectorAll("body *")].filter((e) => getComputedStyle(e).position === "fixed").map((e, i) => { e.dataset.chicoteFixo = i; e.style.setProperty("visibility", "hidden", "important"); return i; }).length);
     await page.screenshot({ path: `${prefixo}-inteira.png`, fullPage: true }).catch(() => {});
     if (ocultos) await page.evaluate(() => document.querySelectorAll("[data-chicote-fixo]").forEach((e) => e.style.removeProperty("visibility")));
@@ -350,30 +458,30 @@ const portoes = [];
 const add = (id, max, pontos, detalhe, falhas = []) => portoes.push({ id, max, pontos: Math.max(0, Math.min(max, +pontos.toFixed(1))), detalhe, falhas });
 const m360 = res["360"], m390 = res["390"], m1440 = res["1440"];
 
-add("cta-360", 10, m360.cta?.naDobra ? 10 : 0, m360.cta ? `${m360.cta.el} (${m360.cta.origem}) · topo ${m360.cta.topo}px, base ${m360.cta.base}px, dobra 640px${m360.cta.naDobra ? "" : " → FORA DA PRIMEIRA TELA"}` : "nenhum CTA encontrado: marque com data-cta=\"principal\"");
-add("cta-desktop", 3, m1440.cta?.naDobra ? 3 : 0, m1440.cta ? `${m1440.cta.el} · base ${m1440.cta.base}px, dobra 900px` : "nenhum CTA encontrado");
+add("cta-360", 8, m360.cta?.naDobra ? 8 : 0, m360.cta ? `${m360.cta.el} (${m360.cta.origem}) · topo ${m360.cta.topo}px, base ${m360.cta.base}px, dobra 640px${m360.cta.naDobra ? "" : " → FORA DA PRIMEIRA TELA"}` : "nenhum CTA encontrado: marque com data-cta=\"principal\"");
+add("cta-desktop", 2, m1440.cta?.naDobra ? 2 : 0, m1440.cta ? `${m1440.cta.el} · base ${m1440.cta.base}px, dobra 900px` : "nenhum CTA encontrado");
 const lateral = ["360", "390", "1440"].filter((k) => res[k].rolagemLateral);
-add("sem-rolagem-lateral", 5, lateral.length ? 0 : 5, lateral.length ? `rolagem lateral em ${lateral.map((k) => `${k}px (documento com ${res[k].larguraDoc}px)`).join(", ")}` : "nenhuma");
+add("sem-rolagem-lateral", 3, lateral.length ? 0 : 3, lateral.length ? `rolagem lateral em ${lateral.map((k) => `${k}px (documento com ${res[k].larguraDoc}px)`).join(", ")}` : "nenhuma");
 
 const somar = (f) => ["360", "390", "1440"].reduce((acc, k) => { const v = f(res[k]); return { ok: acc.ok + v.ok, total: acc.total + v.total }; }, { ok: 0, total: 0 });
 const c = somar((r) => ({ ok: r.contraste.ok, total: r.contraste.total }));
 const pc = c.total ? c.ok / c.total : 1;
 const abaixo3 = ["360", "390", "1440"].reduce((a, k) => a + res[k].contraste.abaixoDe3, 0);
-add("contraste", 8, abaixo3 ? Math.min(4, 8 * pc) : pc >= 0.98 ? 8 : 8 * pc, `${c.ok}/${c.total} textos passam em ${P.contraste}:1 (texto grande: ${Math.min(P.contraste, 4.5) === 4.5 && P.contraste > 4.5 ? 4.5 : 3}:1)${abaixo3 ? ` · ${abaixo3} abaixo de 3:1` : ""}${m390.contraste.sobreImagem.length ? ` · sobre imagem (conferir no print): ${m390.contraste.sobreImagem.length}` : ""}`, [...m360.contraste.falhas, ...m1440.contraste.falhas].slice(0, 12).map((f) => `${f.el}: ${f.razao}:1 (mín. ${f.minimo})`));
+add("contraste", 7, abaixo3 ? Math.min(3.5, 7 * pc) : pc >= 0.98 ? 7 : 7 * pc, `${c.ok}/${c.total} textos passam em ${P.contraste}:1 (texto grande: ${Math.min(P.contraste, 4.5) === 4.5 && P.contraste > 4.5 ? 4.5 : 3}:1)${abaixo3 ? ` · ${abaixo3} abaixo de 3:1` : ""}${m390.contraste.sobreImagem.length ? ` · sobre imagem (conferir no print): ${m390.contraste.sobreImagem.length}` : ""}`, [...m360.contraste.falhas, ...m1440.contraste.falhas].slice(0, 12).map((f) => `${f.el}: ${f.razao}:1 (mín. ${f.minimo})`));
 
 const al = { ok: m360.alvos.ok + m390.alvos.ok, total: m360.alvos.total + m390.alvos.total };
-add("alvos", 6, al.total ? 6 * (al.ok / al.total) : 6, `${al.ok}/${al.total} alvos no celular com ≥ ${P.alvo}px`, [...m360.alvos.falhas].slice(0, 12).map((f) => `${f.el}: ${f.tamanho}`));
+add("alvos", 4, al.total ? 4 * (al.ok / al.total) : 4, `${al.ok}/${al.total} alvos no celular com ≥ ${P.alvo}px`, [...m360.alvos.falhas].slice(0, 12).map((f) => `${f.el}: ${f.tamanho}`));
 
 const fo = somar((r) => ({ ok: r.fonte.corpoOk, total: r.fonte.corpoTotal }));
 const fonteMin = ["360", "390", "1440"].flatMap((k) => res[k].fonte.falhas.filter((f) => f.regra.includes("absoluto")));
-add("fonte", 5, (fo.total ? 5 * (fo.ok / fo.total) : 5) - (fonteMin.length ? 2 : 0), `${fo.ok}/${fo.total} blocos de leitura com ≥ ${P.corpo - (publico === "geral" ? 1 : 0)}px · ${fonteMin.length} textos abaixo de ${P.minimo}px`, [...m360.fonte.falhas].slice(0, 12).map((f) => `${f.el}: ${f.px}px (${f.regra})`));
+add("fonte", 4, (fo.total ? 4 * (fo.ok / fo.total) : 4) - (fonteMin.length ? 2 : 0), `${fo.ok}/${fo.total} blocos de leitura com ≥ ${P.corpo - (publico === "geral" ? 1 : 0)}px · ${fonteMin.length} textos abaixo de ${P.minimo}px`, [...m360.fonte.falhas].slice(0, 12).map((f) => `${f.el}: ${f.px}px (${f.regra})`));
 
 const lcp = m360.lcp;
-add("lcp", 6, lcp <= 2500 ? 6 : lcp >= 4000 ? 0 : 6 * (1 - (lcp - 2500) / 1500), `LCP ${(lcp / 1000).toFixed(2)} s no perfil lento (360px, CPU 4×, 4G ruim)${m360.lcpEl ? ` · elemento: ${m360.lcpEl}` : ""}`);
+add("lcp", 5, lcp <= 2500 ? 5 : lcp >= 4000 ? 0 : 5 * (1 - (lcp - 2500) / 1500), `LCP ${(lcp / 1000).toFixed(2)} s no perfil lento (360px, CPU 4×, 4G ruim)${m360.lcpEl ? ` · elemento: ${m360.lcpEl}` : ""}`);
 
 if (!soHero) {
   const cls = Math.max(m360.cls, m1440.cls);
-  add("cls", 3, cls <= 0.1 ? 3 : cls >= 0.25 ? 0 : 3 * (1 - (cls - 0.1) / 0.15), `CLS ${cls.toFixed(3)}`);
+  add("cls", 2, cls <= 0.1 ? 2 : cls >= 0.25 ? 0 : 2 * (1 - (cls - 0.1) / 0.15), `CLS ${cls.toFixed(3)}`);
   const kb = m360.bytes / 1024, jsKb = m360.js / 1024;
   add("peso", 3, kb <= A.pesoKB ? (jsKb <= A.jsKB ? 3 : 2) : kb >= A.pesoKB * 2 ? 0 : 3 * (1 - (kb - A.pesoKB) / A.pesoKB), `${Math.round(kb)} KB transferidos (orçamento ${A.pesoKB} KB) · JS ${Math.round(jsKb)} KB (orçamento ${A.jsKB} KB)`);
   const s = m390.seo;
@@ -384,27 +492,55 @@ if (!soHero) {
     [s.h1.length === 1, `${s.h1.length} h1`],
     [!!s.ogImage && !!s.viewport && !s.zoomBloqueado, `og:image ${s.ogImage ? "ok" : "faltando"}, viewport ${s.viewport ? (s.zoomBloqueado ? "BLOQUEIA ZOOM" : "ok") : "faltando"}`],
   ];
-  add("seo", 5, seoItens.filter(([ok]) => ok).length, seoItens.map(([ok, t]) => `${ok ? "✓" : "✗"} ${t}`).join(" · "));
+  add("seo", 4, seoItens.filter(([ok]) => ok).length * 0.8, seoItens.map(([ok, t]) => `${ok ? "✓" : "✗"} ${t}`).join(" · "));
   const inf = res.reduzido.animacoesInfinitas ?? [];
   add("movimento", 2, inf.length ? 0 : 2, inf.length ? `com reduced-motion ainda rodam: ${inf.slice(0, 5).join(", ")}` : "nada infinito com prefers-reduced-motion");
 }
 
+
+// ── portões de gosto: atmosfera, visual, profundidade, eixo (as ordens diretas do SKILL.md)
+{
+  const at = m1440.atmosfera;
+  const fr = at.total ? at.ricos / at.total : 0;
+  add("atmosfera", 6, fr >= 0.75 ? 6 : 6 * (fr / 0.75), `${at.ricos}/${at.total} capítulos com camada visual (gradiente, luz, textura, foto)${at.chapados.length ? " · chapados: " + at.chapados.slice(0, 4).join("; ") : ""}`, at.chapados.map((c) => `${c}: fundo chapado. Dê luz (radial), textura (grão), gradiente longo ou foto com véu`));
+  const vis = m1440.midias;
+  const fotos = vis.filter((v) => v.tipo === "foto" || v.tipo === "vídeo").length;
+  const outros = vis.length - fotos;
+  const dobra = m1440.midias.some((v) => v.naDobra) || m360.midias.some((v) => v.naDobra);
+  const semFotoOk = tipo === "sistema";
+  const n = Math.min(3, vis.length);
+  add("visual", 5, semFotoOk ? 5 : (n / 3) * 4 + (dobra ? 1 : 0), semFotoOk ? "tipo sistema: fotos não exigidas" : `${fotos} fotos/vídeos + ${outros} efeitos (canvas, 3D, SVG) · ${dobra ? "tem visual na primeira tela" : "NADA visual na primeira tela"} · mínimo: 3 peças visuais, 1 na dobra`, vis.length < 3 ? ["faltam peças visuais: baixe fotos (node scripts/pexels.mjs) ou desenhe com efeitos/ (pontos, maquete, holofote)"] : []);
+
+  const tp = m1440.tipografia;
+  if (tp) {
+    const ptsFonte = tp.propria ? 1.5 : 0;
+    const ptsTam = tp.px >= 56 ? 0.75 : tp.px >= 44 ? 0.4 : 0;
+    const ptsAperto = tp.aperto <= -0.01 && tp.entrelinha <= 1.12 ? 0.75 : tp.entrelinha <= 1.12 ? 0.35 : 0;
+    add("tipografia", 3, ptsFonte + ptsTam + ptsAperto, `h1 em "${tp.fonte}" ${tp.propria ? "(carregada)" : "(GENÉRICA: carregue uma fonte de título de verdade)"} · ${tp.px}px a 1440 (mín. 56) · letter-spacing ${tp.aperto}em (≤ −0,01) · entrelinha ${tp.entrelinha} (≤ 1,12)`);
+  } else add("tipografia", 3, 0, "sem h1 visível");
+  const pr = m1440.profundidade;
+  add("profundidade", 5, Math.min(3, pr.elementos) + (pr.ctaRelevo ? 2 : 0), `${pr.elementos} elementos com sombra em camadas (mín. 3) · CTA ${pr.ctaRelevo ? "com relevo" : "CHAPADO: dê brilho interno, borda inferior e sombra"}`);
+  const ex = m1440.eixo;
+  const pe = ex.total ? ex.centrados / ex.total : 1;
+  const ptsEixo = 3 * pe + (ex.cardsTextoEsquerda.length ? 0 : 1);
+  add("eixo", 4, ptsEixo, `${ex.centrados}/${ex.total} cards e botões centralizados (ou à direita com texto à esquerda) · ${ex.cards} cards · ${ex.cardsTextoEsquerda.length ? ex.cardsTextoEsquerda.length + " com texto encostado à esquerda" : "conteúdo dos cards centralizado"}`, [...ex.fora.map((f) => `${f}: fora do eixo (encostado à esquerda)`), ...ex.cardsTextoEsquerda.map((f) => `${f}: texto do card alinhado à esquerda`)]);
+}
 {
   const tx = m390.texto;
   const dentro = tx.filter((t) => t.passou).length;
   const jg = m390.jargao;
   const ptsTexto = tx.length ? 2 * (dentro / tx.length) : 2;
   const ptsJargao = jg.length === 0 ? 2 : jg.length <= 2 ? 1 : 0;
-  add("enxuto", 4, ptsTexto + ptsJargao, `${dentro}/${tx.length} capítulos dentro do orçamento (hero ≤ ${LIMITE_HERO}, seção ≤ ${LIMITE_SECAO} palavras) · jargão: ${jg.length ? jg.map((j) => `"${j}"`).join(", ") : "nenhum"}`, tx.filter((t) => !t.passou).map((t) => `${t.el}: ${t.palavras} palavras (limite ${t.limite})`));
+  add("enxuto", 3, (ptsTexto + ptsJargao) * 0.75, `${dentro}/${tx.length} capítulos dentro do orçamento (hero ≤ ${LIMITE_HERO}, seção ≤ ${LIMITE_SECAO} palavras) · jargão: ${jg.length ? jg.map((j) => `"${j}"`).join(", ") : "nenhum"}`, tx.filter((t) => !t.passou).map((t) => `${t.el}: ${t.palavras} palavras (limite ${t.limite})`));
 }
 const maxPortoes = portoes.reduce((a, p) => a + p.max, 0);
 const notaPortoes = +portoes.reduce((a, p) => a + p.pontos, 0).toFixed(1);
-const escala = soHero ? 60 / maxPortoes : 1;
+const escala = soHero ? 70 / maxPortoes : 1;
 
 // rubrica
 let rubrica = null;
 const rubArq = opt("rubrica", null);
-const MAX_RUB = { "hero-frase": 7, roteiro: 5, metafora: 5, composicao: 5, costuras: 5, copy: 4, publico: 5, imagem: 4 };
+const MAX_RUB = { nivel: 6, "hero-frase": 4, roteiro: 3, metafora: 4, composicao: 3, costuras: 3, copy: 2, publico: 2, imagem: 3 };
 if (rubArq) {
   const r = JSON.parse(fs.readFileSync(rubArq, "utf8"));
   const itens = Object.entries(MAX_RUB).map(([id, max]) => {
@@ -437,7 +573,7 @@ if (!m390.seo.canonical) avisos.push("sem link canonical");
 if (m360.cta && m360.cta.altura < Math.max(P.alvo, publico === "idoso" ? 56 : 48)) avisos.push(`CTA principal com ${m360.cta.altura}px de altura no celular; o perfil pede ${Math.max(P.alvo, publico === "idoso" ? 56 : 48)}px`);
 if (m360.cta && !m360.cta.origem.startsWith("data-cta")) avisos.push("CTA detectado pelo texto: marque o principal com data-cta=\"principal\" para a medida ser exata");
 
-const relatorio = { url, publico, aparelho, soHero, total, notaPortoes: +(notaPortoes * escala).toFixed(1), maxPortoes: 60, portoes, rubrica, avisos, medidas: res };
+const relatorio = { url, publico, aparelho, soHero, total, notaPortoes: +(notaPortoes * escala).toFixed(1), maxPortoes: 70, portoes, rubrica, avisos, medidas: res };
 fs.writeFileSync(path.join(saida, "relatorio.json"), JSON.stringify(relatorio, null, 2));
 
 const linhas = [];
@@ -445,7 +581,7 @@ linhas.push(`# Chicotada · ${total}/100${rubrica ? "" : " (só portões; preenc
 linhas.push("");
 linhas.push(`\`${url}\` · público \`${publico}\` · aparelho \`${aparelho}\`${soHero ? " · só hero" : ""}`);
 linhas.push("");
-linhas.push(`## Portões medidos: ${(notaPortoes * escala).toFixed(1)}/60`);
+linhas.push(`## Portões medidos: ${(notaPortoes * escala).toFixed(1)}/70`);
 linhas.push("");
 linhas.push("| Portão | Nota | Medida |");
 linhas.push("|---|---|---|");
@@ -459,7 +595,7 @@ if (comFalha.length) {
   }
 }
 if (rubrica) {
-  linhas.push("", `## Rubrica: ${rubrica.total}/40`, "", "| Item | Nota | Evidência |", "|---|---|---|");
+  linhas.push("", `## Rubrica: ${rubrica.total}/30`, "", "| Item | Nota | Evidência |", "|---|---|---|");
   for (const i of rubrica.itens) linhas.push(`| \`${i.id}\` | ${i.pontos}/${i.max} | ${i.evidencia.replace(/\|/g, "/").replace(/\n/g, " ")} |`);
 } else {
   linhas.push("", "## Rubrica: pendente", "", "Preencha `rubrica.json` (ver `referencias/10-pontuacao.md`) e rode de novo com `--rubrica`.");
