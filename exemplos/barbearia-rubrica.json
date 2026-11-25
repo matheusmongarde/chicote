@@ -1,0 +1,40 @@
+{
+  "nota": "Exemplo fictício: a barbearia, as avaliações e o telefone não existem. Num projeto real, a prova precisa ser real.",
+  "itens": [
+    {
+      "id": "hero-frase",
+      "pontos": 8,
+      "evidencia": "h1 'Barba feita em 30 minutos, sem fila.' · 7 palavras · 3 linhas a 360px (print 360-dobra.png) com 39px = (328×3)÷(36×0,6×1,15) · específica (30 min; o bairro está no selo acima), concreta (30 minutos), do cliente (sem fila), sem jargão. Primeira versão tinha 4 linhas e foi reprovada"
+    },
+    {
+      "id": "roteiro",
+      "pontos": 6,
+      "evidencia": "4 capítulos de página de contato local: hero (fisgar + CTA), placas de preço (objeção preço), ritual (esforço/confiança + CTA), onde fica (ação). Nenhum repetido. CTA no hero, no ritual e na barra fixa que aparece ao sair do hero (avisos sem cadência)"
+    },
+    {
+      "id": "metafora",
+      "pontos": 6,
+      "evidencia": "balcão de navalha: preços em placas esmaltadas de cantos chanfrados (.placa clip-path), divisor = listra do poste (.poste), ritual em escada deslocada 1/6 por degrau (.escada li:nth-child). Nenhuma grade de cards com ícone"
+    },
+    {
+      "id": "composicao",
+      "pontos": 6,
+      "evidencia": "tokens de medidas.mjs idoso/fraco --letra 0.6 (19px, razão 1,2, alvo 52/56, 7:1, título 39–61px); hero 7/5 no desktop, peso 1 = h1, peso 2 = CTA verde, prova 4,9 dentro da dobra a 360px; placas 4/4/4 com o combo como único bloco preenchido na cor de destaque (tamanho e cor = importância)"
+    },
+    {
+      "id": "copy",
+      "pontos": 5,
+      "evidencia": "botões dizem a ação: 'Marcar pelo WhatsApp', 'Ligar (19) 99812-4471', 'Ver a rota no mapa', 'Marcar meu horário'; títulos são frases ('O preço está na placa. Sem surpresa no fim.'); nada da lista anti-slop"
+    },
+    {
+      "id": "publico",
+      "pontos": 5,
+      "evidencia": "idoso: corpo 19px, alvos 52–56px (portão alvos 12/12), contraste 7:1 (91/91), telefone escrito por extenso no botão, sem menu escondido, sem carrossel, foco 3px, barra fixa embaixo (polegar)"
+    },
+    {
+      "id": "imagem",
+      "pontos": 4,
+      "evidencia": "aparelho fraco: zero imagens, 9 KB no total; a atmosfera vem da tipografia serifada e das placas em CSS. Prompt para foto real da cadeira entregue no README do exemplo como próximo passo"
+    }
+  ]
+}

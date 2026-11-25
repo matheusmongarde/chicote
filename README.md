@@ -1,0 +1,104 @@
+# chicote
+
+> Site bonito é portfólio. Site que vende é site acessível.
+
+**[Português](#português) · [English](#english)**
+
+---
+
+## Português
+
+`/chicote` é uma skill para agentes de IA (Claude Code, Codex, Cursor e qualquer agente que lê arquivos) que constrói sites, landing pages, sistemas e componentes **focados em venda**, e não para de chicotear até a página bater 100 pontos.
+
+Ela não confia no gosto do modelo. Ela **mede**. É por isso que funciona até em modelo pequeno.
+
+### O que ela faz
+
+1. **Arranca a história.** Nicho, quem compra (idade, celular, pressa), a ação que conta como venda, a prova que existe de verdade. Sem história, não começa.
+2. **Escreve o hero numa frase.** Se o potencial do produto não cabe numa frase, o problema não é o layout.
+3. **Transforma o nicho em forma.** Nada de três cards iguais ou passo 1-2-3 em fila de ícones. Um site de engenharia ganha carimbo e cotas. Uma barbearia ganha placas de preço esmaltadas. No Olimpo, o card virou um portal grego.
+4. **Calcula cada medida para o público real.** Para idoso, 19px de corpo, alvo de 52px e contraste 7:1. Para celular fraco, orçamento de peso. O tamanho do título sai de uma fórmula para caber em 3 linhas a 360px.
+5. **Justifica a posição de cada elemento** com Fitts, Hick, escala modular, grade de 12 e peso visual. Os egípcios e Leonardo da Vinci entram como método, não como enfeite.
+6. **Mede num navegador de verdade** a 360×640 com CPU 4× mais lenta e 4G ruim. Confere CTA na primeira tela, contraste, alvo de toque, fonte, LCP, CLS, peso, SEO e movimento.
+7. **Chicoteia até 100.** São 60 pontos medidos pelo script e 40 numa rubrica em que cada ponto exige evidência. Máximo de 5 rodadas. Se não chegar, diz o que falta, sem maquiar.
+
+### Instalar
+
+```bash
+git clone https://github.com/matheusmongarde/chicote.git ~/chicote
+cd ~/chicote && npm install && npx playwright install chromium
+
+# Claude Code
+ln -s ~/chicote ~/.claude/skills/chicote
+```
+
+No Claude Code, digite `/chicote` e conte a história. Em outros agentes, aponte para o `SKILL.md`.
+
+### Usar
+
+```
+/chicote Barbearia no Cambuí, Campinas. Cliente de 25 a 70 anos, chega pelo Google Maps no celular.
+Quero que chamem no WhatsApp. Temos 4,9 no Google com 212 avaliações. HTML puro.
+```
+
+Os scripts também rodam sozinhos:
+
+```bash
+node scripts/medidas.mjs --publico idoso --aparelho fraco --titulo "Barba feita em 30 minutos, sem fila." --letra 0.6
+node scripts/chicotada.mjs minha-pagina.html --publico idoso
+node scripts/chicotada.mjs https://meusite.com.br --rubrica chicote/chicotada/rubrica.json
+PEXELS_API_KEY=... node scripts/pexels.mjs --busca "barber shop warm light" --quantos 6
+```
+
+### A prova
+
+Em `exemplos/` há duas páginas:
+
+| Página | Nota | Por quê |
+|---|---|---|
+| `ruim.html` | **22/100** | texto ilegível (33 abaixo de 3:1), botão de 13px, CTA "Saiba mais" fora da primeira tela, zoom bloqueado, animação infinita, três cards com emoji |
+| `barbearia.html` | **100/100** | público idoso, celular fraco, 9 KB, CTA na primeira tela, 7:1 em 91/91 textos, preços em placas esmaltadas |
+
+A barbearia não chegou a 100 de primeira, e vale ler o porquê. O script reprovou um texto em 6,63:1 (o público idoso pede 7:1). Os prints mostraram o título em 4 linhas e o preço mais completo no menor card, ou seja, hierarquia invertida. Foram 4 rodadas, e a fórmula do título ganhou dois fatores reais no caminho (largura da serifada em negrito e a perda de quebrar em palavras inteiras).
+
+Próximo passo do exemplo: uma foto real da cadeira. Prompt para quem não tiver: *"cadeira de barbeiro antiga de couro escuro numa barbearia com azulejo creme, luz quente lateral da janela à esquerda, enquadramento 4:5 com espaço vazio à esquerda, fotografia realista, sem pessoas, sem texto"*.
+
+### Estrutura
+
+```
+SKILL.md              o processo, em 9 passos
+referencias/          12 arquivos lidos sob demanda (história, composição, metáfora, público, conversão…)
+scripts/medidas.mjs   público e aparelho viram tokens CSS com o porquê de cada número
+scripts/chicotada.mjs auditoria num Chromium de verdade, nota de 0 a 60 + rubrica
+scripts/pexels.mjs    busca e baixa fotos com créditos
+modelos/              ficha da história e mapa de composição
+exemplos/             a página ruim e a página 100
+```
+
+---
+
+## English
+
+`/chicote` (Portuguese for "whip") is a skill for AI coding agents that builds websites, landing pages, apps and components **that sell**, then keeps whipping the page until it scores 100.
+
+It doesn't trust the model's taste. It **measures**, which is why it works even with small models.
+
+- **Story first.** Niche, buyer (age, phone, hurry), the action that counts as a sale, real proof. No story, no build.
+- **The hero in one sentence.** If the product doesn't fit in one sentence, the problem isn't the layout.
+- **The niche becomes form.** No three identical cards, no 1-2-3 icon rows. An engineering site gets title blocks and dimension lines; a barbershop gets enamel price plates.
+- **Every measure is computed for the real audience.** For older users: 19px body, 52px targets, 7:1 contrast. The headline size comes from a formula that fits 3 lines at 360px.
+- **Every position is justified** with Fitts's law, Hick's law, a modular scale, a 12-column grid and visual weight.
+- **Measured in a real browser** at 360×640 with 4× CPU throttling and slow 4G: CTA above the fold, contrast, tap targets, font size, LCP, CLS, weight, SEO, reduced motion.
+- **Whipped until 100.** 60 points are measured by the script; 40 come from a rubric where every point needs evidence. Max 5 rounds, with no fake scores.
+
+The skill's instructions are in Portuguese; it answers in the user's language.
+
+```bash
+git clone https://github.com/matheusmongarde/chicote.git ~/chicote
+cd ~/chicote && npm install && npx playwright install chromium
+ln -s ~/chicote ~/.claude/skills/chicote   # Claude Code
+```
+
+---
+
+MIT · feito por [@mongarde_](https://x.com/mongarde_), com o que aprendi construindo a Korely, o mamãe virei dev e o Garimpo.

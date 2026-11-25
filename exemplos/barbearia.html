@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barbearia no Cambuí, Campinas | Navalha de Ouro</title>
+<meta name="description" content="Barba e cabelo com hora marcada no Cambuí. Chame no WhatsApp e escolha o horário: sem fila, a partir de R$ 45.">
+<meta property="og:title" content="Barba feita em 30 minutos, sem fila | Navalha de Ouro">
+<meta property="og:description" content="Barbearia no Cambuí, Campinas. Hora marcada pelo WhatsApp.">
+<meta property="og:image" content="https://navalhadeouro.com.br/og.jpg">
+<link rel="canonical" href="https://navalhadeouro.com.br/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BarberShop","name":"Navalha de Ouro","telephone":"+55-19-99812-4471",
+ "address":{"@type":"PostalAddress","streetAddress":"R. Barão de Jaguara, 812","addressLocality":"Campinas","addressRegion":"SP","addressCountry":"BR"},
+ "openingHours":"Tu-Sa 09:00-20:00","priceRange":"R$ 45 – R$ 90"}
+</script>
+<!--
+  Exemplo do chicote. Público: idoso (dono de 60+ e clientes de todas as idades), aparelho: fraco.
+  Tokens de scripts/medidas.mjs --publico idoso --aparelho fraco --titulo "Barba feita em 30 minutos, sem fila." --letra 0.6
+  Metáfora: balcão de navalha → card = placa de preço esmaltada (cantos chanfrados), divisor = listra do poste,
+  número = preço em placa, passo a passo = ritual em escada (toalha → navalha → acabamento).
+-->
+<style>
+  :root {
+    --t-corpo: 19px; --t1: 23px; --t2: 27px; --t3: 33px; --t-titulo: clamp(39px, 2.037vw + 31.7px, 61px);
+    --lh-corpo: 1.6; --lh-titulo: 1.12; --medida: 60ch;
+    --e1: 8px; --e2: 16px; --e3: 24px; --e4: 32px; --e6: 48px; --e8: 64px; --e12: 96px;
+    --alvo: 52px; --alvo-cta: 56px; --margem: clamp(16px, 5vw, 40px);
+    /* cores: contraste ≥ 7:1 para texto (público idoso) */
+    --papel: #f6f1e7; --tinta: #1b1712; --tinta-2: #3d3529; --latao: #6b3f0c; --verde: #0b5d3b; --verde-texto: #ffffff;
+    --curva: cubic-bezier(.2,.8,.2,1);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--papel); color: var(--tinta); font: var(--t-corpo)/var(--lh-corpo) system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; padding-bottom: calc(var(--alvo-cta) + var(--e3)); }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: var(--lh-titulo); margin: 0; letter-spacing: -.01em; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--latao); outline-offset: 3px; }
+  .faixa { padding: var(--e8) var(--margem); max-width: 1200px; margin: 0 auto; }
+
+  /* Hero: frase-pôster, eixo à esquerda no celular, 7/5 no desktop */
+  .hero { display: grid; gap: var(--e3); padding-top: var(--e4); }
+  .selo { font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--latao); font-weight: 700; }
+  .hero h1 { font-size: var(--t-titulo); max-width: 14ch; }
+  .hero p { margin: 0; max-width: 34ch; color: var(--tinta-2); }
+  .cta { display: flex; align-items: center; justify-content: center; gap: var(--e1); min-height: var(--alvo-cta); padding: 0 var(--e3); border-radius: 10px; background: var(--verde); color: var(--verde-texto); font-weight: 700; font-size: 20px; text-decoration: none; white-space: nowrap; }
+  .cta.solto { display: inline-flex; }
+  .cta-sec { display: flex; align-items: center; justify-content: center; min-height: var(--alvo); border: 2px solid var(--tinta); border-radius: 10px; font-weight: 700; text-decoration: none; padding: 0 var(--e3); white-space: nowrap; }
+  .acoes { display: grid; gap: var(--e2); }
+  .nota { display: flex; align-items: baseline; gap: var(--e1); }
+  .nota b { font-family: Georgia, serif; font-size: var(--t3); }
+
+  /* divisor = listra do poste */
+  .poste { height: 8px; background: repeating-linear-gradient(135deg, #8b1e1e 0 12px, var(--papel) 12px 24px, #1d3b6b 24px 36px, var(--papel) 36px 48px); }
+
+  /* Preços: placas esmaltadas com cantos chanfrados */
+  .placas { display: grid; gap: var(--e3); margin-top: var(--e4); }
+  .placa { position: relative; padding: var(--e3); background: var(--tinta); color: var(--papel); clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px); display: grid; grid-template-columns: 1fr auto; align-items: baseline; align-content: start; gap: var(--e1) var(--e2); }
+  /* o combo é o único bloco preenchido na cor de destaque: é o que mais vale (tamanho e cor = importância) */
+  .placa.destaque { background: var(--verde); }
+  .placa.destaque p { color: #ffffff; }
+  .placa h3 { font-size: var(--t1); }
+  .placa .preco { font-family: Georgia, serif; font-size: var(--t3); color: #f3d9a4; }
+  .placa p { grid-column: 1 / -1; margin: 0; color: #efe6d4; }
+
+  /* Ritual em escada */
+  .escada { list-style: none; padding: 0; margin: var(--e4) 0 0; display: grid; gap: var(--e3); counter-reset: d; }
+  .escada li { border-left: 4px solid var(--latao); padding: var(--e1) 0 var(--e1) var(--e3); }
+  .escada b { display: block; font-family: Georgia, serif; font-size: var(--t2); }
+
+  .onde { display: grid; gap: var(--e2); }
+  footer { padding: var(--e6) var(--margem); font-size: 17px; color: var(--tinta-2); max-width: 1200px; margin: 0 auto; }
+
+  /* barra fixa de contato: polegar (Fitts) */
+  .barra { position: fixed; left: 0; right: 0; bottom: 0; padding: var(--e1) var(--margem) calc(var(--e1) + env(safe-area-inset-bottom)); background: var(--papel); border-top: 1px solid #d9cfbd; display: grid; grid-template-columns: 1fr auto; gap: var(--e1); transition: transform 200ms var(--curva); }
+  .barra.oculta { transform: translateY(110%); }
+  .barra .tel { display: flex; align-items: center; justify-content: center; min-width: var(--alvo-cta); min-height: var(--alvo-cta); border: 2px solid var(--tinta); border-radius: 10px; font-weight: 700; text-decoration: none; padding: 0 var(--e2); }
+
+  @media (min-width: 900px) {
+    .hero { grid-template-columns: 7fr 5fr; align-items: end; padding-top: var(--e8); }
+    .acoes { max-width: 26rem; }
+    .placas { grid-template-columns: repeat(12, 1fr); }
+    .placa { grid-column: span 4; }
+    .escada li:nth-child(2) { margin-left: 16.66%; }
+    .escada li:nth-child(3) { margin-left: 33.33%; }
+    .barra { display: none; }
+    body { padding-bottom: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cta { transition: transform 160ms var(--curva); }
+    .cta:active { transform: translateY(1px); }
+  }
+</style>
+</head>
+<body>
+<header class="faixa" style="padding-bottom:0">
+  <span class="selo">Navalha de Ouro · Cambuí, Campinas</span>
+</header>
+<main>
+  <section class="faixa hero">
+    <div>
+      <h1>Barba feita em 30 minutos, sem fila.</h1>
+    </div>
+    <div style="display:grid;gap:var(--e3)">
+      <p>Você escolhe o horário pelo WhatsApp e senta na cadeira na hora marcada.</p>
+      <div class="acoes">
+        <a class="cta" data-cta="principal" href="https://wa.me/5519998124471?text=Ol%C3%A1!%20Quero%20marcar%20um%20hor%C3%A1rio">Marcar pelo WhatsApp</a>
+        <a class="cta-sec" href="tel:+5519998124471">Ligar (19) 99812-4471</a>
+      </div>
+      <p class="nota"><b>4,9</b> no Google, 212 avaliações</p>
+    </div>
+  </section>
+  <div class="poste" aria-hidden="true"></div>
+  <section class="faixa">
+    <h2 style="font-size:var(--t3)">O preço está na placa. Sem surpresa no fim.</h2>
+    <div class="placas">
+      <article class="placa"><h3>Barba completa</h3><span class="preco">R$ 45</span><p>Toalha quente, navalha e balm. 30 minutos.</p></article>
+      <article class="placa"><h3>Cabelo</h3><span class="preco">R$ 55</span><p>Tesoura ou máquina, com lavagem. 40 minutos.</p></article>
+      <article class="placa destaque"><h3>Cabelo e barba</h3><span class="preco">R$ 90</span><p>Os dois, numa cadeira só. 70 minutos.</p></article>
+    </div>
+  </section>
+  <section class="faixa">
+    <h2 style="font-size:var(--t3)">O ritual, do jeito antigo.</h2>
+    <ol class="escada">
+      <li><b>Toalha quente</b>Abre os poros e amacia o fio.</li>
+      <li><b>Navalha</b>Fio novo a cada cliente, na frente de você.</li>
+      <li><b>Acabamento</b>Balm, espelho e o próximo horário marcado antes de sair.</li>
+    </ol>
+    <p style="margin-top:var(--e4)"><a class="cta solto" data-cta href="https://wa.me/5519998124471?text=Ol%C3%A1!%20Quero%20marcar%20um%20hor%C3%A1rio">Marcar meu horário</a></p>
+  </section>
+  <section class="faixa onde">
+    <h2 style="font-size:var(--t3)">Onde fica</h2>
+    <p style="margin:0">R. Barão de Jaguara, 812, Cambuí, Campinas.<br>Terça a sábado, das 9h às 20h.</p>
+    <a class="cta-sec" href="https://maps.google.com/?q=R.+Bar%C3%A3o+de+Jaguara,+812,+Campinas" style="justify-self:start">Ver a rota no mapa</a>
+  </section>
+</main>
+<footer>Navalha de Ouro · (19) 99812-4471 · CNPJ 00.000.000/0001-00</footer>
+<nav class="barra oculta" aria-label="Contato rápido">
+  <a class="cta" data-cta href="https://wa.me/5519998124471?text=Ol%C3%A1!%20Quero%20marcar%20um%20hor%C3%A1rio">Marcar horário</a>
+  <a class="tel" href="tel:+5519998124471" aria-label="Ligar para a barbearia">Ligar</a>
+</nav>
+<script>
+  // A barra fixa só aparece depois que o CTA do hero sai da tela: nunca dois CTAs iguais na mesma dobra (Hick).
+  const barra = document.querySelector(".barra"), principal = document.querySelector('[data-cta="principal"]');
+  if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => barra.classList.toggle("oculta", e.isIntersecting)).observe(principal);
+  else barra.classList.remove("oculta");
+</script>
+</body>
+</html>
