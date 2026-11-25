@@ -58,10 +58,10 @@ Leia `referencias/02-historia.md` e `referencias/06-conversao.md`.
 
 ### 3. Metáfora: o nicho vira forma
 
-Leia `referencias/04-metafora.md` e `referencias/12-anti-slop.md`.
+Leia `referencias/04-metafora.md`, `referencias/16-composicoes.md` e `referencias/12-anti-slop.md`.
 
 - Liste 10 objetos, materiais, gestos e lugares reais do nicho. Escolha **uma** metáfora e derive dela a forma dos componentes que mais aparecem: o card, o divisor, o número, o botão, o passo a passo. (Exemplo real: no Olimpo, o card virou um portal grego de vidro, com arco, colunas e fecho dourado.)
-- Para cada seção, nomeie a **estrutura dominante** (`referencias/03-composicao.md`, catálogo de estruturas). Proibido: três cards iguais lado a lado como solução padrão, passo 1-2-3 em fila de ícones, tudo alinhado à esquerda sem eixo.
+- Para cada seção, nomeie a **estrutura dominante** (`referencias/03-composicao.md`, catálogo de estruturas). Quando houver vários itens, escolha a **composição** (pilha deslocada, leque, escada, bento com hierarquia, quebra-grade, encaixe, órbita, baralho em rolagem: `16-composicoes.md`). O mais importante é maior. Proibido: três cards iguais lado a lado como solução padrão, passo 1-2-3 em fila de ícones, tudo alinhado à esquerda sem eixo.
 - A metáfora nunca esconde a função: o botão continua parecendo botão, o preço continua legível.
 
 ### 4. Medidas: o público vira número
@@ -74,20 +74,28 @@ node scripts/medidas.mjs --publico <geral|idoso|jovem|b2b|tecnico> --aparelho <f
 
 Ele devolve os tokens (`tokens.css`) e o porquê de cada número (`medidas.md`): corpo, escala, entrelinha, medida de linha, grade, espaçamento, alvo de toque, contraste mínimo, tamanho máximo do título para caber em 3 linhas a 360px, orçamento de peso e de movimento. **Use esses tokens. Não invente número fora deles** sem escrever o porquê.
 
-### 5. Composição justificada
+### 5. Composição justificada: capítulos, costuras, cabeçalho e rodapé
 
-Preencha `chicote/composicao.md` (modelo em `modelos/composicao.md`): para cada capítulo, eixo (esquerda, centro, direita, diagonal), colunas na grade, peso visual (1 = o mais forte da tela), rota do olhar e **o porquê com número** (Fitts, Hick, escala, contraste, medida). Só existe **um** peso 1 por dobra, e no hero ele é a frase ou o CTA.
+Leia `referencias/13-costuras.md` e `referencias/14-cabecalho-rodape.md`. Preencha `chicote/composicao.md` (modelo em `modelos/composicao.md`):
 
-### 6. Imagem, 3D e movimento
+- **Cada capítulo:** eixo (esquerda, centro, direita, diagonal), colunas na grade, peso visual (1 = o mais forte da tela), rota do olhar e **o porquê com número** (Fitts, Hick, escala, contraste, medida). Só existe **um** peso 1 por dobra, e no hero ele é a frase ou o CTA.
+- **Cada costura** entre capítulos: o que leva o olho de uma seção à outra (elemento que atravessa, forma da metáfora, fio condutor, sobreposição, pergunta-ponte…). Linha de 1px e troca seca de fundo não são costura.
+- **Cabeçalho:** o comportamento no celular e no desktop (some ao descer, encolhe, vira barra de ação, mora embaixo, estático) e o porquê.
+- **Rodapé:** o último capítulo (última chamada → o prático → o legal), com a forma da metáfora (carimbo, recibo, placa da porta, receituário…). Nunca o rodapé genérico de 40 links.
 
-Leia `referencias/07-imagem-3d.md` e `referencias/08-movimento.md`.
+### 6. Imagem, efeito, 3D e movimento
+
+Leia `referencias/07-imagem-3d.md`, `referencias/15-efeitos.md` e `referencias/08-movimento.md`.
 
 - Decida a densidade de imagem pelo nicho e pelo aparelho. Foto real do cliente vence banco de imagem. Nicho regulado (saúde, advocacia, nutrição) tem regras: siga.
-- Para cada vaga de imagem: ou baixe do Pexels (`node scripts/pexels.mjs --busca "..." --quantos 6 --saida public/img`, precisa de `PEXELS_API_KEY`), ou **entregue o prompt pronto** para ChatGPT/Gemini com proporção, composição, luz e espaço livre para o texto. Diga onde a imagem entra e por quê.
+- Para cada vaga de imagem: baixe do Pexels (`node scripts/pexels.mjs --busca "..." --quantos 6 --saida public/img`, sem chave, já em duas larguras para o `srcset`) ou **entregue o prompt pronto** para ChatGPT/Gemini com proporção, composição, luz e espaço livre para o texto. Diga onde a imagem entra e por quê.
+- **Quando imagem não serve** (produto abstrato, sem foto boa, peso demais), desenhe com código: campo de pontos que reage ao dedo, holofote na malha, card que inclina em 3D, maquete em CSS, traço que se desenha, grão. Receitas testadas em `efeitos/`, com as travas de desempenho.
 - 3D só se o nicho ganha com ele **e** o aparelho do público aguenta; sempre com imagem estática de reserva.
 - Todo movimento tem função (orientar, confirmar, mostrar causa e efeito) e respeita `prefers-reduced-motion`.
 
 ### 7. Construa
+
+Escreva pouco: hero com até 30–35 palavras, seção com até 70–110 (pelo público), nenhum jargão (`02-historia.md`). O script mede.
 
 Na stack pedida. Se nada foi pedido: HTML + CSS + o mínimo de JS, que funciona em qualquer lugar e passa nos portões mais fácil.
 
@@ -123,7 +131,7 @@ Entregue, curto e nesta ordem:
 - Rolagem lateral em qualquer largura.
 - Texto de leitura abaixo do mínimo do público, contraste abaixo do mínimo do público, alvo de toque abaixo do mínimo do público.
 - Depoimento, número, prêmio ou cliente inventado. Sem prova real, a seção de prova vira garantia, demonstração ou "veja funcionando".
-- Emoji como ícone, gradiente roxo genérico, "Eleve seu negócio", "Solução completa", três cards idênticos como resposta padrão (lista completa em `referencias/12-anti-slop.md`).
+- Emoji como ícone, gradiente roxo genérico, "Eleve seu negócio", "Solução completa", três cards idênticos como resposta padrão, linha cinza separando seções, rodapé genérico (lista completa em `referencias/12-anti-slop.md`).
 - Animação que atrasa o conteúdo, rouba o foco ou roda sem parar.
 - Dizer que está pronto sem ter rodado a chicotada. Se não deu para rodar, diga isso com todas as letras.
 
@@ -143,3 +151,7 @@ Entregue, curto e nesta ordem:
 | `10-pontuacao.md` | os 60 pontos medidos e os 40 da rubrica |
 | `11-outras-skills.md` | como combinar com outras skills |
 | `12-anti-slop.md` | o que denuncia página feita por IA e o que pôr no lugar |
+| `13-costuras.md` | como uma seção encaixa na outra (nada de linha separando) |
+| `14-cabecalho-rodape.md` | o comportamento do cabeçalho e o rodapé como último capítulo |
+| `15-efeitos.md` | efeitos em CSS/canvas no lugar de imagem, sem travar (código em `efeitos/`) |
+| `16-composicoes.md` | composições de cards: pilha, leque, escada, bento, quebra-grade, órbita |

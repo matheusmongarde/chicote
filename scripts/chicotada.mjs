@@ -56,6 +56,10 @@ async function carregarPlaywright() {
 }
 const { chromium } = await carregarPlaywright();
 
+// orçamento de palavras (ver referencias/02-historia.md)
+const LIMITE_HERO = publico === "idoso" ? 30 : 35;
+const LIMITE_SECAO = publico === "idoso" ? 70 : publico === "b2b" || publico === "tecnico" ? 110 : 90;
+
 const APARELHOS_TESTE = [
   { id: "360", largura: 360, altura: 640, lento: true, movel: true },
   { id: "390", largura: 390, altura: 844, lento: false, movel: true },
@@ -72,7 +76,7 @@ const OBSERVADORES = `
 `;
 
 // Tudo que roda dentro da página para medir.
-function medirNaPagina({ alvoMin, corpoMin, minimo, contrasteMin }) {
+function medirNaPagina({ alvoMin, corpoMin, minimo, contrasteMin, limiteHero, limiteSecao }) {
   const vw = innerWidth, vh = innerHeight;
   const visivel = (el) => {
     const s = getComputedStyle(el);
@@ -154,7 +158,8 @@ function medirNaPagina({ alvoMin, corpoMin, minimo, contrasteMin }) {
     }
     // fonte: texto de leitura = parágrafo/li/td com mais de 40 caracteres
     const txt = el.innerText.trim();
-    const leitura = /^(P|LI|TD|DD|BLOCKQUOTE|LABEL|SPAN|A|DIV)$/.test(el.tagName) && txt.length > 40;
+    // <small> é metadado (legal, crédito): só precisa do mínimo absoluto
+    const leitura = /^(P|LI|TD|DD|BLOCKQUOTE|LABEL|SPAN|A|DIV)$/.test(el.tagName) && txt.length > 40 && !el.closest("small");
     if (px < minimo - 0.1) fonteFalhas.push({ el: sel(el), px, regra: `abaixo do mínimo absoluto ${minimo}px` });
     if (leitura) {
       fonteCorpoTotal++;
@@ -227,7 +232,30 @@ function medirNaPagina({ alvoMin, corpoMin, minimo, contrasteMin }) {
     return { el: sel(p), chars: Math.round(chars), alinhamento: s.textAlign, hifen: s.hyphens };
   }).filter((x) => x.chars > 85 || (x.alinhamento === "justify" && (x.chars < 45 || x.hifen !== "auto")));
 
+  // texto: palavras por capítulo e jargão
+  const contar = (t) => (t.match(/[\p{L}\p{N}]+/gu) || []).length;
+  let capitulos = [...document.querySelectorAll("main > section, main > article, body > section")].filter(visivel);
+  if (capitulos.length < 2) capitulos = [...(document.querySelector("main") || document.body).children].filter((e) => visivel(e) && !/^(NAV|HEADER|FOOTER|SCRIPT|STYLE)$/.test(e.tagName));
+  const texto = capitulos.map((c, i) => {
+    const t = c.innerText || "";
+    const palavras = contar(t);
+    const limite = i === 0 ? limiteHero : limiteSecao;
+    return { el: sel(c).slice(0, 70), palavras, limite, passou: palavras <= limite };
+  });
+  const corpoTexto = (document.querySelector("main") || document.body).innerText || "";
+  const JARGAO = [/solu[çc](ão|ões) (completa|inovadora|integrada|personalizada)s?/i, /inovador[ae]?s?\b/i, /revolucion[áa]ri[oa]s?/i, /disruptiv[oa]s?/i, /alavanc(ar|e|ando)/i, /potencializ(ar|e|ando)/i, /sinergia/i, /\bde ponta\b/i, /excel[êe]ncia/i, /qualidade e (compromisso|excel)/i, /elev(e|ar) (o |a )?(seu|sua)/i, /outro n[íi]vel/i, /agregar valor/i, /experi[êe]ncia [úu]nica/i, /empoder/i, /bem-vind[oa] ao (nosso )?site/i, /saiba mais/i, /clique aqui/i, /lorem ipsum/i, /nosso compromisso/i, /somos uma empresa/i, /transform(e|ar) (a |o )?(sua|seu) (presen[çc]a|neg[óo]cio)/i, /next level/i, /game[- ]changer/i, /seamless/i, /cutting[- ]edge/i, /unlock (your|the)/i, /elevate your/i];
+  const jargao = [...new Set(JARGAO.flatMap((re) => { const m = corpoTexto.match(re); return m ? [m[0]] : []; }))];
+
+  // cabeçalho: altura e comportamento no celular
+  const cab = document.querySelector("header") || [...document.body.children].find((e) => { const p = getComputedStyle(e).position; return (p === "fixed" || p === "sticky") && e.getBoundingClientRect().top <= 1; });
+  let cabecalho = null;
+  if (cab && visivel(cab)) {
+    const r = cab.getBoundingClientRect(), p = getComputedStyle(cab).position;
+    cabecalho = { altura: Math.round(r.height), fixo: p === "fixed" || p === "sticky", temCta: !!cab.querySelector("[data-cta], a[href^='tel:'], a[href*='wa.me']"), menuEscondido: !!cab.querySelector("[aria-expanded], .hamburguer, .menu-toggle, button[aria-controls]") };
+  }
+
   return {
+    texto, jargao, cabecalho,
     rolagemLateral: document.documentElement.scrollWidth > vw + 1,
     larguraDoc: document.documentElement.scrollWidth,
     alturaDoc: document.documentElement.scrollHeight,
@@ -280,8 +308,13 @@ async function medirAparelho(browser, ap, reduzir = false) {
   }
   const prefixo = path.join(saida, ap.id);
   await page.screenshot({ path: `${prefixo}-dobra.png` });
-  const m = await page.evaluate(medirNaPagina, { alvoMin: ap.movel ? P.alvo : Math.min(P.alvo, 32), corpoMin: P.corpo - (publico === "geral" ? 1 : 0), minimo: P.minimo, contrasteMin: P.contraste });
-  if (!soHero) await page.screenshot({ path: `${prefixo}-inteira.png`, fullPage: true }).catch(() => {});
+  const m = await page.evaluate(medirNaPagina, { alvoMin: ap.movel ? P.alvo : Math.min(P.alvo, 32), corpoMin: P.corpo - (publico === "geral" ? 1 : 0), minimo: P.minimo, contrasteMin: P.contraste, limiteHero: LIMITE_HERO, limiteSecao: LIMITE_SECAO });
+  if (!soHero) {
+    // elementos fixos (barra de contato, cabeçalho fixo) apareceriam no meio do print da página inteira
+    const ocultos = await page.evaluate(() => [...document.querySelectorAll("body *")].filter((e) => getComputedStyle(e).position === "fixed").map((e, i) => { e.dataset.chicoteFixo = i; e.style.setProperty("visibility", "hidden", "important"); return i; }).length);
+    await page.screenshot({ path: `${prefixo}-inteira.png`, fullPage: true }).catch(() => {});
+    if (ocultos) await page.evaluate(() => document.querySelectorAll("[data-chicote-fixo]").forEach((e) => e.style.removeProperty("visibility")));
+  }
   // CTA presente ao longo da rolagem (celular)
   if (ap.movel && !soHero) {
     const passos = Math.max(1, Math.ceil(m.alturaDoc / ap.altura));
@@ -318,9 +351,9 @@ const add = (id, max, pontos, detalhe, falhas = []) => portoes.push({ id, max, p
 const m360 = res["360"], m390 = res["390"], m1440 = res["1440"];
 
 add("cta-360", 10, m360.cta?.naDobra ? 10 : 0, m360.cta ? `${m360.cta.el} (${m360.cta.origem}) · topo ${m360.cta.topo}px, base ${m360.cta.base}px, dobra 640px${m360.cta.naDobra ? "" : " → FORA DA PRIMEIRA TELA"}` : "nenhum CTA encontrado: marque com data-cta=\"principal\"");
-add("cta-desktop", 4, m1440.cta?.naDobra ? 4 : 0, m1440.cta ? `${m1440.cta.el} · base ${m1440.cta.base}px, dobra 900px` : "nenhum CTA encontrado");
+add("cta-desktop", 3, m1440.cta?.naDobra ? 3 : 0, m1440.cta ? `${m1440.cta.el} · base ${m1440.cta.base}px, dobra 900px` : "nenhum CTA encontrado");
 const lateral = ["360", "390", "1440"].filter((k) => res[k].rolagemLateral);
-add("sem-rolagem-lateral", 6, lateral.length ? 0 : 6, lateral.length ? `rolagem lateral em ${lateral.map((k) => `${k}px (documento com ${res[k].larguraDoc}px)`).join(", ")}` : "nenhuma");
+add("sem-rolagem-lateral", 5, lateral.length ? 0 : 5, lateral.length ? `rolagem lateral em ${lateral.map((k) => `${k}px (documento com ${res[k].larguraDoc}px)`).join(", ")}` : "nenhuma");
 
 const somar = (f) => ["360", "390", "1440"].reduce((acc, k) => { const v = f(res[k]); return { ok: acc.ok + v.ok, total: acc.total + v.total }; }, { ok: 0, total: 0 });
 const c = somar((r) => ({ ok: r.contraste.ok, total: r.contraste.total }));
@@ -342,7 +375,7 @@ if (!soHero) {
   const cls = Math.max(m360.cls, m1440.cls);
   add("cls", 3, cls <= 0.1 ? 3 : cls >= 0.25 ? 0 : 3 * (1 - (cls - 0.1) / 0.15), `CLS ${cls.toFixed(3)}`);
   const kb = m360.bytes / 1024, jsKb = m360.js / 1024;
-  add("peso", 4, kb <= A.pesoKB ? (jsKb <= A.jsKB ? 4 : 3) : kb >= A.pesoKB * 2 ? 0 : 4 * (1 - (kb - A.pesoKB) / A.pesoKB), `${Math.round(kb)} KB transferidos (orçamento ${A.pesoKB} KB) · JS ${Math.round(jsKb)} KB (orçamento ${A.jsKB} KB)`);
+  add("peso", 3, kb <= A.pesoKB ? (jsKb <= A.jsKB ? 3 : 2) : kb >= A.pesoKB * 2 ? 0 : 3 * (1 - (kb - A.pesoKB) / A.pesoKB), `${Math.round(kb)} KB transferidos (orçamento ${A.pesoKB} KB) · JS ${Math.round(jsKb)} KB (orçamento ${A.jsKB} KB)`);
   const s = m390.seo;
   const seoItens = [
     [!!s.lang, `lang="${s.lang}"`],
@@ -353,9 +386,17 @@ if (!soHero) {
   ];
   add("seo", 5, seoItens.filter(([ok]) => ok).length, seoItens.map(([ok, t]) => `${ok ? "✓" : "✗"} ${t}`).join(" · "));
   const inf = res.reduzido.animacoesInfinitas ?? [];
-  add("movimento", 3, inf.length ? 0 : 3, inf.length ? `com reduced-motion ainda rodam: ${inf.slice(0, 5).join(", ")}` : "nada infinito com prefers-reduced-motion");
+  add("movimento", 2, inf.length ? 0 : 2, inf.length ? `com reduced-motion ainda rodam: ${inf.slice(0, 5).join(", ")}` : "nada infinito com prefers-reduced-motion");
 }
 
+{
+  const tx = m390.texto;
+  const dentro = tx.filter((t) => t.passou).length;
+  const jg = m390.jargao;
+  const ptsTexto = tx.length ? 2 * (dentro / tx.length) : 2;
+  const ptsJargao = jg.length === 0 ? 2 : jg.length <= 2 ? 1 : 0;
+  add("enxuto", 4, ptsTexto + ptsJargao, `${dentro}/${tx.length} capítulos dentro do orçamento (hero ≤ ${LIMITE_HERO}, seção ≤ ${LIMITE_SECAO} palavras) · jargão: ${jg.length ? jg.map((j) => `"${j}"`).join(", ") : "nenhum"}`, tx.filter((t) => !t.passou).map((t) => `${t.el}: ${t.palavras} palavras (limite ${t.limite})`));
+}
 const maxPortoes = portoes.reduce((a, p) => a + p.max, 0);
 const notaPortoes = +portoes.reduce((a, p) => a + p.pontos, 0).toFixed(1);
 const escala = soHero ? 60 / maxPortoes : 1;
@@ -363,7 +404,7 @@ const escala = soHero ? 60 / maxPortoes : 1;
 // rubrica
 let rubrica = null;
 const rubArq = opt("rubrica", null);
-const MAX_RUB = { "hero-frase": 8, roteiro: 6, metafora: 6, composicao: 6, copy: 5, publico: 5, imagem: 4 };
+const MAX_RUB = { "hero-frase": 7, roteiro: 5, metafora: 5, composicao: 5, costuras: 5, copy: 4, publico: 5, imagem: 4 };
 if (rubArq) {
   const r = JSON.parse(fs.readFileSync(rubArq, "utf8"));
   const itens = Object.entries(MAX_RUB).map(([id, max]) => {
@@ -383,6 +424,14 @@ if (m360.cadenciaCta && m360.cadenciaCta.telas > 2 && !m360.ctaFixo && m360.cade
 if (m390.semAlt.length) avisos.push(`imagens sem alt: ${m390.semAlt.slice(0, 5).join(", ")}`);
 if (m1440.grandesDemais.length) avisos.push(`imagens maiores que o necessário: ${m1440.grandesDemais.join("; ")}`);
 if (m1440.linhasLongas.length) avisos.push(`medida de linha ou justificado problemático: ${m1440.linhasLongas.map((l) => `${l.el} ~${l.chars} car./linha${l.alinhamento === "justify" ? " justificado" + (l.hifen !== "auto" ? " sem hyphens:auto" : "") : ""}`).join("; ")}`);
+const cab = m360.cabecalho;
+if (cab && cab.fixo && cab.altura > 640 * 0.12) avisos.push(`cabeçalho fixo com ${cab.altura}px a 360×640 (${Math.round((cab.altura / 640) * 100)}% da tela): o limite é 12% (77px)`);
+if (cab && cab.menuEscondido && !cab.temCta && !(m360.cta && m360.cta.naDobra)) avisos.push("no celular, o CTA principal parece estar escondido dentro do menu");
+if (publico === "idoso" && cab && cab.menuEscondido) avisos.push("público idoso: troque o menu escondido (hambúrguer) por palavras visíveis ou barra inferior");
+if (!soHero && m390.texto.length >= 2) {
+  const total = m390.texto.reduce((a, t) => a + t.palavras, 0);
+  if (total > LIMITE_SECAO * 7) avisos.push(`a página tem ${total} palavras nos capítulos: corte até caber em ~${LIMITE_SECAO * 7}`);
+}
 if (!m390.seo.jsonld) avisos.push("sem dados estruturados JSON-LD (LocalBusiness, Product, FAQPage)");
 if (!m390.seo.canonical) avisos.push("sem link canonical");
 if (m360.cta && m360.cta.altura < Math.max(P.alvo, publico === "idoso" ? 56 : 48)) avisos.push(`CTA principal com ${m360.cta.altura}px de altura no celular; o perfil pede ${Math.max(P.alvo, publico === "idoso" ? 56 : 48)}px`);

@@ -64,6 +64,25 @@ Regras:
 - Sem superlativo vazio ("melhor", "incrível", "revolucionário"). Troque pelo fato que o justificaria.
 - Sem depoimento, número ou logo de cliente inventado. Se não há prova, use demonstração, garantia ou "veja funcionando".
 
+## Orçamento de palavras
+
+Texto demais esconde a frase que vende. O `chicotada.mjs` conta as palavras de cada capítulo (portão `enxuto`):
+
+| Onde | geral / jovem | idoso | b2b / técnico |
+|---|---|---|---|
+| Hero inteiro (título + apoio + botões + prova) | ≤ 35 | ≤ 30 | ≤ 35 |
+| Cada seção | ≤ 90 | ≤ 70 | ≤ 110 |
+| Card | ≤ 20 | ≤ 15 | ≤ 30 |
+| Parágrafo | ≤ 3 linhas a 360px | ≤ 3 linhas | ≤ 4 linhas |
+
+Passou do orçamento? Troque parágrafo por número, lista de fatos por tabela, explicação por demonstração, instrução por botão.
+
+## Jargão: proibido
+
+O script procura e tira pontos: "solução completa/inovadora/integrada", "inovador", "revolucionário", "disruptivo", "alavancar", "potencializar", "sinergia", "de ponta", "excelência", "qualidade e compromisso", "eleve seu…", "outro nível", "agregar valor", "experiência única", "empoderar", "bem-vindo ao nosso site", "saiba mais", "clique aqui", "lorem ipsum", "nosso compromisso", "somos uma empresa", "transforme sua presença/negócio" (e os equivalentes em inglês: "next level", "game changer", "seamless", "cutting-edge", "unlock your", "elevate your").
+
+Teste da tia: se a frase precisa de explicação para alguém de 70 anos que nunca trabalhou com aquilo, é jargão.
+
 ## Componente também é história
 
 Antes de pôr qualquer elemento, responda: **que passo da jornada ele é?**

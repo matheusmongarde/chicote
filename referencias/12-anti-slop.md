@@ -13,7 +13,11 @@ Cada item abaixo é sintoma de que ninguém pensou no nicho, no público ou na h
 | Hero com 3 parágrafos e 2 botões iguais | uma frase, uma linha de apoio, um CTA (o secundário em contorno) |
 | Faixa com 4 números iguais ("+500 clientes", "+10 anos"…) | o número mais forte, gigante, com contexto; os outros pequenos ou fora |
 | Logo de "empresas que confiam" inventadas | prova real ou demonstração |
-| Rodapé com 40 links | contato, endereço, horário, CNPJ, redes; o resto sai |
+| Rodapé com 40 links em 5 colunas | rodapé como último capítulo: chamada → prático → legal, com a forma da metáfora (`14-cabecalho-rodape.md`) |
+| Linha cinza de 1px entre seções, ou troca seca de fundo | costura: elemento que atravessa, forma da metáfora, sobreposição, pergunta-ponte (`13-costuras.md`) |
+| Todas as seções com o mesmo padding | ritmo: 1× quando continua, 2× quando muda de assunto, 3× na virada |
+| Cabeçalho fixo de 90px com menu hambúrguer e o CTA escondido dentro | cabeçalho de 56–64px, CTA fora do menu, comportamento escolhido (some, encolhe, vira barra de ação) |
+| Foto de banco genérica só para "ter imagem" | efeito desenhado com código ou nenhuma imagem (`15-efeitos.md`) |
 | Card dentro de card | um nível só |
 | Carrossel automático | grade ou pilha estática; carrossel só se o visitante controla |
 

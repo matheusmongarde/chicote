@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Efeitos do chicote: pontos, holofote, 3D em CSS e traço</title>
+<meta name="description" content="Seis efeitos que substituem imagem sem travar o celular: pontos que reagem ao dedo, holofote, inclinação 3D, maquete em CSS, traço e grão.">
+<meta property="og:image" content="https://github.com/matheusmongarde/chicote/og.png">
+<link rel="stylesheet" href="../efeitos/holofote.css">
+<link rel="stylesheet" href="../efeitos/camadas.css">
+<link rel="stylesheet" href="../efeitos/grao.css">
+<style>
+  :root { --fundo: #0d0f12; --sup: #15181d; --tinta: #eceef2; --tinta-2: #b8bfcc; --ouro: #e9b43c; --azul: #8ea6ff; --e2: 16px; --e3: 24px; --e4: 32px; --e6: 48px; --e8: 64px; --e12: 96px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fundo); color: var(--tinta); font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  h1, h2 { font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin: 0; }
+  h1 { font-size: clamp(40px, 6vw, 76px); }
+  h2 { font-size: clamp(28px, 3.6vw, 44px); }
+  p { margin: 0; color: var(--tinta-2); max-width: 52ch; }
+  .faixa { max-width: 1200px; margin: 0 auto; padding: var(--e8) clamp(16px, 5vw, 40px); }
+  .rotulo { font: 600 14px/1 ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--ouro); margin-bottom: var(--e2); display: block; }
+  .cta { display: inline-flex; align-items: center; min-height: 52px; padding: 0 var(--e3); border-radius: 12px; background: var(--ouro); color: #111; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .cta:focus-visible, a:focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
+
+  .hero { display: grid; gap: var(--e4); align-items: center; }
+  .hero .campo { aspect-ratio: 1; color: var(--ouro); border-radius: 24px; background: var(--sup); touch-action: pan-y; }
+  @media (min-width: 900px) { .hero { grid-template-columns: 7fr 5fr; } }
+
+  /* costura: o card de inclinação sobe por cima da borda do hero */
+  .holofote { --cor-malha: var(--azul); }
+  .inclinavel { position: relative; overflow: hidden; max-width: 420px; padding: var(--e4); border-radius: 20px; background: linear-gradient(160deg, #1f2430, #14171c); border: 1px solid #2b313b; margin-top: calc(var(--e6) * -1); box-shadow: 0 30px 60px -30px rgb(0 0 0 / .8); }
+  .inclinavel::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: var(--brilho, 0); transition: opacity 300ms; background: radial-gradient(circle at var(--bx, 50%) var(--by, 0%), rgb(255 255 255 / .22), transparent 55%); }
+  .inclinavel b { display: block; font-size: 40px; color: var(--ouro); }
+
+  .duas { display: grid; gap: var(--e6); align-items: center; }
+  @media (min-width: 900px) { .duas { grid-template-columns: 5fr 7fr; } }
+  .traco { width: 100%; height: auto; color: var(--ouro); margin-top: var(--e3); }
+
+  .papel { background: #f3ede1; color: #1b1712; }
+  .papel p { color: #3d3529; }
+  .papel .rotulo { color: #6b3f0c; }
+  footer { padding: var(--e6) clamp(16px, 5vw, 40px); max-width: 1200px; margin: 0 auto; color: var(--tinta-2); font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <section class="faixa hero">
+    <div>
+      <span class="rotulo">1 · pontos.js</span>
+      <h1>Quando não há foto boa, desenhe com código.</h1>
+      <p style="margin:var(--e3) 0">Passe o mouse ou o dedo nos pontos. Menos de 2 KB, e para sozinho quando nada se mexe.</p>
+      <a class="cta" data-cta="principal" href="https://github.com/matheusmongarde/chicote">Ver no GitHub</a>
+    </div>
+    <div class="campo" data-pontos data-passo="26" data-raio="130" aria-hidden="true"></div>
+  </section>
+
+  <section class="holofote">
+    <div class="faixa" style="padding-top:var(--e12)">
+      <span class="rotulo">2 · holofote.css · 3 · inclinacao.js</span>
+      <h2 style="max-width:16ch">A malha acende onde o olho está.</h2>
+      <p style="margin:var(--e3) 0 var(--e8)">Malha em CSS puro; o JS só move duas variáveis. Abaixo, o card inclina seguindo o cursor.</p>
+      <article class="inclinavel" data-inclinar data-max="9">
+        <b>R$ 97</b>
+        <p>Card de oferta com reflexo de luz. Só transform. No celular, fica parado.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="faixa duas">
+    <div>
+      <span class="rotulo">4 · camadas.css · 5 · revelar.js</span>
+      <h2>Uma maquete sem nenhuma imagem.</h2>
+      <p style="margin-top:var(--e3)">Seis camadas com translateZ. Gira conforme a página rola; com movimento reduzido, fica parada.</p>
+      <svg class="traco" viewBox="0 0 400 40" aria-hidden="true"><path data-revelar d="M2 30 H398 M2 22 V38 M398 22 V38" stroke="currentColor" stroke-width="2" fill="none"/><text x="200" y="16" text-anchor="middle" fill="currentColor" font-size="13" font-family="ui-monospace, monospace">12,40 m</text></svg>
+    </div>
+    <div class="maquete" style="--n:6"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i></div>
+  </section>
+
+  <section class="papel grao">
+    <div class="faixa">
+      <span class="rotulo">6 · grao.css</span>
+      <h2>Papel com matéria, sem baixar nada.</h2>
+      <p style="margin-top:var(--e3)">Grão em SVG inline, estático, 400 bytes.</p>
+    </div>
+  </section>
+</main>
+<footer>chicote · efeitos em <code>efeitos/</code> · MIT</footer>
+<script src="../efeitos/pontos.js" defer></script>
+<script src="../efeitos/holofote.js" defer></script>
+<script src="../efeitos/inclinacao.js" defer></script>
+<script src="../efeitos/revelar.js" defer></script>
+</body>
+</html>

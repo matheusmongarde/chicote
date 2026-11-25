@@ -1,67 +1,111 @@
 #!/usr/bin/env node
 /**
- * pexels.mjs: busca e baixa fotos do Pexels, com créditos.
+ * pexels.mjs: busca e baixa fotos do Pexels, com créditos. Não precisa de chave.
  *
- *   PEXELS_API_KEY=... node scripts/pexels.mjs --busca "barber shop warm light" --quantos 6 --orientacao landscape --saida public/img
+ *   node scripts/pexels.mjs --busca "barber shop warm light" --quantos 6 --orientacao landscape --saida public/img
+ *   node scripts/pexels.mjs --ids 6372911,8532753 --saida public/img        (quando já sabe as fotos)
  *
- * Chave grátis em https://www.pexels.com/api/ . Gera CREDITOS.md na pasta de saída.
+ * A busca abre pexels.com num Chromium de verdade (o mesmo da chicotada) e lê as fotos da página.
+ * O download vem direto de images.pexels.com, em duas larguras (celular e desktop).
+ * Com PEXELS_API_KEY no ambiente, usa a API oficial (traz o nome do fotógrafo).
  */
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
+import { pathToFileURL, fileURLToPath } from "node:url";
 
+const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const argv = process.argv.slice(2);
 const opt = (k, d) => {
   const i = argv.indexOf("--" + k);
   return i < 0 ? d : argv[i + 1];
 };
 const busca = opt("busca");
+const idsArg = opt("ids");
 const quantos = Math.min(30, Number(opt("quantos", 6)));
 const orientacao = opt("orientacao", "landscape"); // landscape | portrait | square
-const tamanho = opt("tamanho", "large2x"); // original | large2x | large | medium
+const larguras = (opt("larguras", "800,1600")).split(",").map(Number);
 const saida = path.resolve(opt("saida", "public/img"));
-const chave = process.env.PEXELS_API_KEY;
 
-if (!busca) {
-  console.log('uso: PEXELS_API_KEY=... node scripts/pexels.mjs --busca "termos em inglês" [--quantos 6] [--orientacao landscape|portrait|square] [--saida public/img]');
+if (!busca && !idsArg) {
+  console.log('uso: node scripts/pexels.mjs --busca "termos em inglês" [--quantos 6] [--orientacao landscape|portrait|square] [--larguras 800,1600] [--saida public/img]\n     node scripts/pexels.mjs --ids 6372911,8532753');
   process.exit(1);
 }
-if (!chave) {
-  console.error(`
-Falta a chave do Pexels (grátis):
-  1. Crie a conta em https://www.pexels.com/join-consumer/
-  2. Peça a chave em https://www.pexels.com/api/new/
-  3. Rode: PEXELS_API_KEY=sua_chave node scripts/pexels.mjs --busca "${busca}"
 
-Sem chave? Entregue o prompt de imagem (referencias/07-imagem-3d.md) ou use a forma da metáfora em CSS.`);
-  process.exit(2);
+async function viaApi() {
+  const u = new URL("https://api.pexels.com/v1/search");
+  u.searchParams.set("query", busca);
+  u.searchParams.set("per_page", String(quantos));
+  u.searchParams.set("orientation", orientacao);
+  const r = await fetch(u, { headers: { Authorization: process.env.PEXELS_API_KEY } });
+  if (!r.ok) throw new Error(`API ${r.status}`);
+  const { photos = [] } = await r.json();
+  return photos.map((f) => ({ id: String(f.id), alt: f.alt || busca, autor: f.photographer, perfil: f.photographer_url }));
 }
 
-const u = new URL("https://api.pexels.com/v1/search");
-u.searchParams.set("query", busca);
-u.searchParams.set("per_page", String(quantos));
-u.searchParams.set("orientation", orientacao);
-const r = await fetch(u, { headers: { Authorization: chave } });
-if (!r.ok) {
-  console.error(`Pexels respondeu ${r.status}: ${(await r.text()).slice(0, 200)}`);
+async function viaNavegador() {
+  let pw;
+  for (const base of [path.join(AQUI, ".."), process.cwd()]) {
+    try {
+      const mod = await import(pathToFileURL(createRequire(path.join(base, "package.json")).resolve("playwright")).href);
+      pw = mod.chromium ? mod : mod.default;
+      break;
+    } catch {}
+  }
+  if (!pw) throw new Error(`Playwright não encontrado: cd ${path.join(AQUI, "..")} && npm install && npx playwright install chromium`);
+  const b = await pw.chromium.launch();
+  try {
+    const p = await b.newPage({ userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36", locale: "en-US", viewport: { width: 1280, height: 900 } });
+    const u = `https://www.pexels.com/search/${encodeURIComponent(busca)}/${orientacao ? `?orientation=${orientacao}` : ""}`;
+    await p.goto(u, { waitUntil: "domcontentloaded", timeout: 45000 });
+    await p.waitForTimeout(3500);
+    for (let i = 0; i < 3; i++) {
+      const n = await p.$$eval("img[src*='images.pexels.com/photos/']", (x) => x.length);
+      if (n >= quantos + 4) break;
+      await p.mouse.wheel(0, 2500);
+      await p.waitForTimeout(1200);
+    }
+    const fotos = await p.$$eval("img[src*='images.pexels.com/photos/']", (imgs) =>
+      imgs.map((i) => ({ id: (i.src.match(/photos\/(\d+)/) || [])[1], alt: i.alt || "", w: i.naturalWidth })).filter((f) => f.id && f.w > 100),
+    );
+    const vistos = new Set();
+    return fotos.filter((f) => !vistos.has(f.id) && vistos.add(f.id)).slice(0, quantos).map((f) => ({ id: f.id, alt: f.alt.replace(/^Free\s+/i, "").replace(/\s+Stock Photo$/i, "") || busca }));
+  } finally {
+    await b.close();
+  }
+}
+
+let fotos;
+if (idsArg) fotos = idsArg.split(",").map((id) => ({ id: id.trim(), alt: "" }));
+else if (process.env.PEXELS_API_KEY) fotos = await viaApi().catch(() => viaNavegador());
+else fotos = await viaNavegador();
+
+if (!fotos.length) {
+  console.error("Nada encontrado. Busque em inglês e com coisas concretas: objeto + luz + ângulo (\"barber chair warm light close up\").");
   process.exit(1);
 }
-const { photos = [] } = await r.json();
-if (!photos.length) {
-  console.error("Nada encontrado. Tente termos em inglês, mais concretos (objeto + luz + ângulo).");
-  process.exit(1);
-}
+
 fs.mkdirSync(saida, { recursive: true });
-const slug = busca.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+const slug = (busca ?? "pexels").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
 const creditos = [];
-for (const [i, f] of photos.entries()) {
-  const src = f.src[tamanho] ?? f.src.large2x;
-  const arq = `${slug}-${String(i + 1).padStart(2, "0")}.jpg`;
-  const img = await fetch(src);
-  fs.writeFileSync(path.join(saida, arq), Buffer.from(await img.arrayBuffer()));
-  creditos.push(`- \`${arq}\` · ${f.width}×${f.height} · foto de [${f.photographer}](${f.photographer_url}) no [Pexels](${f.url}) · alt sugerido: "${f.alt || busca}"`);
-  console.log(`baixada ${arq} (${f.photographer})`);
+for (const [i, f] of fotos.entries()) {
+  const nome = `${slug}-${String(i + 1).padStart(2, "0")}`;
+  const feitos = [];
+  for (const w of larguras) {
+    const url = `https://images.pexels.com/photos/${f.id}/pexels-photo-${f.id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
+    const r = await fetch(url);
+    if (!r.ok) continue;
+    const arq = `${nome}-${w}.jpg`;
+    fs.writeFileSync(path.join(saida, arq), Buffer.from(await r.arrayBuffer()));
+    feitos.push(arq);
+  }
+  if (!feitos.length) continue;
+  const autor = f.autor ? `de [${f.autor}](${f.perfil}) ` : "";
+  creditos.push(`- \`${feitos.join("`, `")}\` · foto ${autor}no [Pexels](https://www.pexels.com/photo/${f.id}/) · alt sugerido: "${f.alt}"`);
+  console.log(`baixada ${nome} (${feitos.length} larguras) · ${f.alt.slice(0, 60)}`);
 }
 const credArq = path.join(saida, "CREDITOS.md");
 const antes = fs.existsSync(credArq) ? fs.readFileSync(credArq, "utf8") : "# Créditos das imagens\n\nNo rodapé do site: \"Imagens ilustrativas: Pexels\".\n";
-fs.writeFileSync(credArq, `${antes}\n## "${busca}"\n${creditos.join("\n")}\n`);
-console.log(`\n${photos.length} fotos em ${saida}. Créditos em CREDITOS.md. Converta para AVIF/WebP e gere 2 larguras antes de usar.`);
+fs.writeFileSync(credArq, `${antes}\n## "${busca ?? idsArg}"\n${creditos.join("\n")}\n`);
+console.log(`\n${creditos.length} fotos em ${saida}, larguras ${larguras.join(" e ")} para o srcset. Créditos em CREDITOS.md.`);
+console.log('Use: <img src="X-800.jpg" srcset="X-800.jpg 800w, X-1600.jpg 1600w" sizes="(min-width: 900px) 50vw, 100vw" alt="..." width="..." height="..." loading="lazy">');

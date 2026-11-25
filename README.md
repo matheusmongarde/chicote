@@ -19,8 +19,11 @@ Ela não confia no gosto do modelo. Ela **mede**. É por isso que funciona até 
 3. **Transforma o nicho em forma.** Nada de três cards iguais ou passo 1-2-3 em fila de ícones. Um site de engenharia ganha carimbo e cotas. Uma barbearia ganha placas de preço esmaltadas. No Olimpo, o card virou um portal grego.
 4. **Calcula cada medida para o público real.** Para idoso, 19px de corpo, alvo de 52px e contraste 7:1. Para celular fraco, orçamento de peso. O tamanho do título sai de uma fórmula para caber em 3 linhas a 360px.
 5. **Justifica a posição de cada elemento** com Fitts, Hick, escala modular, grade de 12 e peso visual. Os egípcios e Leonardo da Vinci entram como método, não como enfeite.
-6. **Mede num navegador de verdade** a 360×640 com CPU 4× mais lenta e 4G ruim. Confere CTA na primeira tela, contraste, alvo de toque, fonte, LCP, CLS, peso, SEO e movimento.
-7. **Chicoteia até 100.** São 60 pontos medidos pelo script e 40 numa rubrica em que cada ponto exige evidência. Máximo de 5 rodadas. Se não chegar, diz o que falta, sem maquiar.
+6. **Costura uma seção na outra.** Nada de linha cinza separando faixas. Um elemento atravessa a borda, a borda tem a forma do nicho, uma pergunta no fim de uma seção é respondida no título da próxima. O cabeçalho tem comportamento escolhido (some, encolhe, vira barra de ação, mora embaixo) e o rodapé é o último capítulo: carimbo de engenharia, comanda de restaurante, placa da porta da barbearia.
+7. **Compõe os cards em vez de enfileirar.** Pilha deslocada, leque, escada, bento com hierarquia, quebra-grade, órbita, baralho em rolagem. O mais importante é maior.
+8. **Desenha quando a imagem não serve.** Campo de pontos que reage ao dedo, holofote na malha, card que inclina em 3D, maquete só de CSS, traço que se desenha, grão de papel. Cada efeito tem menos de 3 KB, para fora da tela e tem versão estática para quem pede menos movimento.
+9. **Mede num navegador de verdade** a 360×640 com CPU 4× mais lenta e 4G ruim. Confere CTA na primeira tela, contraste, alvo de toque, fonte, LCP, CLS, peso, SEO, movimento e **texto**: conta as palavras de cada seção e caça jargão ("soluções completas", "eleve seu negócio", "saiba mais").
+10. **Chicoteia até 100.** São 60 pontos medidos pelo script e 40 numa rubrica em que cada ponto exige evidência. Máximo de 5 rodadas. Se não chegar, diz o que falta, sem maquiar.
 
 ### Instalar
 
@@ -47,19 +50,22 @@ Os scripts também rodam sozinhos:
 node scripts/medidas.mjs --publico idoso --aparelho fraco --titulo "Barba feita em 30 minutos, sem fila." --letra 0.6
 node scripts/chicotada.mjs minha-pagina.html --publico idoso
 node scripts/chicotada.mjs https://meusite.com.br --rubrica chicote/chicotada/rubrica.json
-PEXELS_API_KEY=... node scripts/pexels.mjs --busca "barber shop warm light" --quantos 6
+node scripts/pexels.mjs --busca "barber shop warm light" --quantos 6      # sem chave, já em 2 larguras
 ```
 
 ### A prova
 
-Em `exemplos/` há duas páginas:
+Em `exemplos/` há três páginas (`npm run teste` roda as três):
 
 | Página | Nota | Por quê |
 |---|---|---|
-| `ruim.html` | **22/100** | texto ilegível (33 abaixo de 3:1), botão de 13px, CTA "Saiba mais" fora da primeira tela, zoom bloqueado, animação infinita, três cards com emoji |
-| `barbearia.html` | **100/100** | público idoso, celular fraco, 9 KB, CTA na primeira tela, 7:1 em 91/91 textos, preços em placas esmaltadas |
+| `ruim.html` | **34,7/100** | texto ilegível (33 abaixo de 3:1), botão de 13px, zoom bloqueado, animação infinita, 12 jargões, três cards com emoji |
+| `barbearia.html` | **100/100** | público idoso, celular fraco, ~10 KB; a placa do combo atravessa a listra do poste e sobe no hero; o ritual começa numa dobra de toalha; o rodapé é a placa da porta com "aberto agora" |
+| `efeitos.html` | **60/60** nos portões | os 6 efeitos funcionando a 60 quadros por segundo, sem estourar peso nem LCP |
 
 A barbearia não chegou a 100 de primeira, e vale ler o porquê. O script reprovou um texto em 6,63:1 (o público idoso pede 7:1). Os prints mostraram o título em 4 linhas e o preço mais completo no menor card, ou seja, hierarquia invertida. Foram 4 rodadas, e a fórmula do título ganhou dois fatores reais no caminho (largura da serifada em negrito e a perda de quebrar em palavras inteiras).
+
+Depois disso, a barbearia passou por mais uma rodada com costuras, cabeçalho e rodapé. Os portões pegaram o texto legal em 13px (o mínimo do idoso é 15) e uma seção acima do orçamento de palavras.
 
 Próximo passo do exemplo: uma foto real da cadeira. Prompt para quem não tiver: *"cadeira de barbeiro antiga de couro escuro numa barbearia com azulejo creme, luz quente lateral da janela à esquerda, enquadramento 4:5 com espaço vazio à esquerda, fotografia realista, sem pessoas, sem texto"*.
 
@@ -67,12 +73,14 @@ Próximo passo do exemplo: uma foto real da cadeira. Prompt para quem não tiver
 
 ```
 SKILL.md              o processo, em 9 passos
-referencias/          12 arquivos lidos sob demanda (história, composição, metáfora, público, conversão…)
+referencias/          16 arquivos lidos sob demanda (história, composição, metáfora, público, conversão, costuras,
+                      cabeçalho e rodapé, efeitos, composições de cards…)
+efeitos/              pontos, holofote, inclinação 3D, maquete em CSS, traço e grão, prontos para colar
 scripts/medidas.mjs   público e aparelho viram tokens CSS com o porquê de cada número
 scripts/chicotada.mjs auditoria num Chromium de verdade, nota de 0 a 60 + rubrica
-scripts/pexels.mjs    busca e baixa fotos com créditos
+scripts/pexels.mjs    busca e baixa fotos do Pexels sem chave, em 2 larguras, com créditos
 modelos/              ficha da história e mapa de composição
-exemplos/             a página ruim e a página 100
+exemplos/             a página ruim, a página 100 e a vitrine de efeitos
 ```
 
 ---
@@ -88,7 +96,10 @@ It doesn't trust the model's taste. It **measures**, which is why it works even 
 - **The niche becomes form.** No three identical cards, no 1-2-3 icon rows. An engineering site gets title blocks and dimension lines; a barbershop gets enamel price plates.
 - **Every measure is computed for the real audience.** For older users: 19px body, 52px targets, 7:1 contrast. The headline size comes from a formula that fits 3 lines at 360px.
 - **Every position is justified** with Fitts's law, Hick's law, a modular scale, a 12-column grid and visual weight.
-- **Measured in a real browser** at 360×640 with 4× CPU throttling and slow 4G: CTA above the fold, contrast, tap targets, font size, LCP, CLS, weight, SEO, reduced motion.
+- **Sections are stitched together**, not separated by lines: an element crosses the edge, the edge takes the niche's shape, the header has a chosen behavior and the footer is the last chapter.
+- **Cards are composed** (offset stack, fan, staircase, hierarchical bento, grid-break), never three identical boxes.
+- **Code-drawn effects instead of stock photos**: a dot field that reacts to touch, a spotlight grid, 3D tilt, a CSS-only model. Each is under 3 KB, pauses off-screen and respects reduced motion.
+- **Measured in a real browser** at 360×640 with 4× CPU throttling and slow 4G: CTA above the fold, contrast, tap targets, font size, LCP, CLS, weight, SEO, reduced motion, word budget and jargon.
 - **Whipped until 100.** 60 points are measured by the script; 40 come from a rubric where every point needs evidence. Max 5 rounds, with no fake scores.
 
 The skill's instructions are in Portuguese; it answers in the user's language.

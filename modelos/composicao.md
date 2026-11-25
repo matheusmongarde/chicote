@@ -15,4 +15,24 @@ Tokens: `chicote/medidas/tokens.css` · Grade: 12 colunas (desktop) / 4 (celular
 - **Movimento:** função e duração, ou "nenhum"
 - **Imagem:** vaga, proporção, o que prova, origem (real / Pexels / prompt)
 
+## Costura 1 → 2
+- **Tipo:** elemento que atravessa | forma da metáfora | fio condutor | continuação de cor | sobreposição | pergunta-ponte | elemento fixo
+- **Como:** (ex.: a placa do combo sobe 96px por cima da listra do poste)
+- **Por quê:**
+
 ## Capítulo 2: …
+
+## Cabeçalho
+- **Comportamento no celular:** some ao descer | encolhe | barra de ação | mora embaixo | estático — por quê:
+- **Comportamento no desktop:**
+- **O que ele mostra:** marca + (CTA | telefone | estado "aberto agora" | menu de até 4 itens)
+
+## Rodapé
+- **Forma da metáfora:** (carimbo, recibo, placa da porta, receituário, canhoto…)
+- **Camada 1, última chamada:**
+- **Camada 2, o prático:**
+- **Camada 3, o legal:**
+- **Costura com o último capítulo:**
+
+## Efeitos
+- **Qual, onde e por quê** (`15-efeitos.md`), com as travas:

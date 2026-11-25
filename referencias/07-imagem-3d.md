@@ -16,13 +16,16 @@ Ordem de preferência: **foto real do cliente > tela real do produto > foto gera
 ## Banco de imagem: Pexels
 
 ```bash
-PEXELS_API_KEY=... node scripts/pexels.mjs --busca "barber shop interior warm light" --quantos 6 --orientacao landscape --saida public/img
+node scripts/pexels.mjs --busca "barber shop interior warm light" --quantos 6 --orientacao landscape --saida public/img
+node scripts/pexels.mjs --ids 6372911,8532753 --saida public/img     # quando já sabe as fotos
 ```
 
-- Chave grátis em pexels.com/api. Sem chave, o script explica como pegar.
+- Não precisa de chave: a busca abre o pexels.com no mesmo Chromium da chicotada e o download vem direto de `images.pexels.com`. Com `PEXELS_API_KEY` no ambiente, usa a API oficial (traz o nome do fotógrafo).
+- Já baixa em duas larguras (800 e 1600) para o `srcset`.
 - Busque em inglês, com luz e ambiente na busca ("warm light", "top view", "minimal").
 - O script grava `CREDITOS.md`. Ponha "Imagens ilustrativas: Pexels" no rodapé quando usar.
-- Converta para AVIF/WebP e gere 2 tamanhos (celular e desktop) antes de usar.
+- Converta para AVIF/WebP antes de publicar, se a stack não fizer isso sozinha.
+- **Sem foto boa?** Antes de cair no banco de imagem genérico, veja se um efeito desenhado com código diz mais (`15-efeitos.md`).
 
 ## Prompt para gerar a imagem (ChatGPT, Gemini, Midjourney)
 

@@ -3,38 +3,43 @@
   "itens": [
     {
       "id": "hero-frase",
-      "pontos": 8,
-      "evidencia": "h1 'Barba feita em 30 minutos, sem fila.' · 7 palavras · 3 linhas a 360px (print 360-dobra.png) com 39px = (328×3)÷(36×0,6×1,15) · específica (30 min; o bairro está no selo acima), concreta (30 minutos), do cliente (sem fila), sem jargão. Primeira versão tinha 4 linhas e foi reprovada"
+      "pontos": 7,
+      "evidencia": "h1 'Barba feita em 30 minutos, sem fila.' · 7 palavras · 3 linhas a 360px (print 360-dobra.png) com 39px = (328×3)÷(36×0,6×1,15) · específica (30 min; o bairro está no cabeçalho), concreta (30 minutos), do cliente (sem fila), sem jargão. A primeira versão tinha 4 linhas e foi reprovada"
     },
     {
       "id": "roteiro",
-      "pontos": 6,
-      "evidencia": "4 capítulos de página de contato local: hero (fisgar + CTA), placas de preço (objeção preço), ritual (esforço/confiança + CTA), onde fica (ação). Nenhum repetido. CTA no hero, no ritual e na barra fixa que aparece ao sair do hero (avisos sem cadência)"
+      "pontos": 5,
+      "evidencia": "3 capítulos e o rodapé: hero (fisgar + CTA), placas de preço (objeção preço), ritual (confiança), placa da porta (onde, quando + CTA final). Nenhum repetido. CTA no hero, no rodapé e na barra fixa que aparece quando o CTA do hero sai da tela"
     },
     {
       "id": "metafora",
-      "pontos": 6,
-      "evidencia": "balcão de navalha: preços em placas esmaltadas de cantos chanfrados (.placa clip-path), divisor = listra do poste (.poste), ritual em escada deslocada 1/6 por degrau (.escada li:nth-child). Nenhuma grade de cards com ícone"
+      "pontos": 5,
+      "evidencia": "balcão de navalha: preços em placas esmaltadas chanfradas (.placa clip-path), o combo maior e o único verde (composição quebra-grade, área maior = mais importante), ritual em escada deslocada 1/6 por degrau, rodapé = placa da porta com aberto/fechado"
     },
     {
       "id": "composicao",
-      "pontos": 6,
-      "evidencia": "tokens de medidas.mjs idoso/fraco --letra 0.6 (19px, razão 1,2, alvo 52/56, 7:1, título 39–61px); hero 7/5 no desktop, peso 1 = h1, peso 2 = CTA verde, prova 4,9 dentro da dobra a 360px; placas 4/4/4 com o combo como único bloco preenchido na cor de destaque (tamanho e cor = importância)"
+      "pontos": 5,
+      "evidencia": "tokens de medidas.mjs idoso/fraco --letra 0.6 (19px, razão 1,2, alvo 52/56, 7:1, título 39–61px); hero 7/5 no desktop, peso 1 = h1, peso 2 = CTA verde, prova 4,9 dentro da dobra a 360px; placas: h2 1–7, combo 9–12 em duas linhas da grade, avulsas 1–4 e 5–8"
+    },
+    {
+      "id": "costuras",
+      "pontos": 5,
+      "evidencia": "1→2: a placa do combo sobe 160px e atravessa a listra do poste até o hero (print 1440-inteira.png); 2→3: pergunta-ponte 'E como é feita a barba?' → 'O ritual, do jeito antigo.'; 3→4: o ritual começa numa dobra de toalha (clip-path) e a placa da porta sobe 96px por cima do fim dele. Cabeçalho estático (página de 3 telas, sem menu, Hick) com o estado 'Aberto agora · até 20h', que quem vem do Maps procura. Rodapé em 3 camadas: chamada 'Sua cadeira, no seu horário.' + CTA, horário/endereço/rota, legal em <small>"
     },
     {
       "id": "copy",
-      "pontos": 5,
-      "evidencia": "botões dizem a ação: 'Marcar pelo WhatsApp', 'Ligar (19) 99812-4471', 'Ver a rota no mapa', 'Marcar meu horário'; títulos são frases ('O preço está na placa. Sem surpresa no fim.'); nada da lista anti-slop"
+      "pontos": 4,
+      "evidencia": "portão enxuto 4/4, jargão nenhum; botões dizem a ação: 'Marcar pelo WhatsApp', 'Ligar (19) 99812-4471', 'Ver a rota no mapa', 'Marcar meu horário'; títulos são frases"
     },
     {
       "id": "publico",
       "pontos": 5,
-      "evidencia": "idoso: corpo 19px, alvos 52–56px (portão alvos 12/12), contraste 7:1 (91/91), telefone escrito por extenso no botão, sem menu escondido, sem carrossel, foco 3px, barra fixa embaixo (polegar)"
+      "evidencia": "idoso: corpo 19px, alvos 52–56px (portão alvos 100%), contraste 7:1 em todos os textos, telefone escrito por extenso no botão, sem menu escondido, sem carrossel, foco 3px, barra fixa embaixo (polegar), horário em lista legível"
     },
     {
       "id": "imagem",
       "pontos": 4,
-      "evidencia": "aparelho fraco: zero imagens, 9 KB no total; a atmosfera vem da tipografia serifada e das placas em CSS. Prompt para foto real da cadeira entregue no README do exemplo como próximo passo"
+      "evidencia": "aparelho fraco: zero imagens, página em ~10 KB; a atmosfera vem da serifa, das placas e da listra em CSS. Próximo passo com prompt entregue no README: foto real da cadeira (node scripts/pexels.mjs --busca 'barber chair warm light' como reserva)"
     }
   ]
 }
