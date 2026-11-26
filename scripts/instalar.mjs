@@ -20,12 +20,26 @@ const skills = path.join(os.homedir(), ".claude", "skills");
 const destino = path.join(skills, "chicote");
 fs.mkdirSync(skills, { recursive: true });
 let estado;
-try {
-  const atual = fs.realpathSync(destino);
-  estado = atual === raiz ? "já ligado" : `já existe e aponta para ${atual} (não mexi)`;
-} catch {
+const existente = fs.lstatSync(destino, { throwIfNoEntry: false });
+if (!existente) {
   fs.symlinkSync(raiz, destino, "dir");
   estado = "ligado agora";
+} else if (!existente.isSymbolicLink()) {
+  estado = "já existe e não é um link (não mexi)";
+} else {
+  let atual = null;
+  try {
+    atual = fs.realpathSync(destino);
+  } catch {}
+  if (atual === raiz) {
+    estado = "já ligado";
+  } else if (atual === null) {
+    fs.unlinkSync(destino);
+    fs.symlinkSync(raiz, destino, "dir");
+    estado = "link quebrado trocado";
+  } else {
+    estado = `já existe e aponta para ${atual} (não mexi)`;
+  }
 }
 console.log(`▸ Claude Code: ${destino} → ${raiz} (${estado})`);
 console.log(`

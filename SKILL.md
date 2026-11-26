@@ -171,7 +171,7 @@ Entregue, curto e nesta ordem:
 | `07-imagem-3d.md` | imagem, banco de fotos, prompts, 3D, nichos regulados |
 | `08-movimento.md` | animação com função e por aparelho |
 | `09-desempenho-seo.md` | orçamento de peso, Core Web Vitals, SEO local |
-| `10-pontuacao.md` | os 60 pontos medidos e os 40 da rubrica |
+| `10-pontuacao.md` | os 70 pontos medidos e os 30 da rubrica |
 | `11-outras-skills.md` | como combinar com outras skills |
 | `12-anti-slop.md` | o que denuncia página feita por IA e o que pôr no lugar |
 | `13-costuras.md` | como uma seção encaixa na outra (nada de linha separando) |
