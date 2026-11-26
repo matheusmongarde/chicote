@@ -25,7 +25,7 @@ const opt = (k, d) => {
   return v === undefined || v.startsWith("--") ? true : v;
 };
 if (!alvoArg || opt("ajuda")) {
-  console.log("uso: node scripts/chicotada.mjs <url | arquivo.html> [--publico geral|idoso|jovem|b2b|tecnico] [--aparelho fraco|medio|forte] [--saida pasta] [--rubrica rubrica.json] [--so-hero] [--tipo venda-direta|contato|cadastro|sistema]");
+  console.log("uso: node scripts/chicotada.mjs <url | arquivo.html> [--publico geral|idoso|jovem|b2b|tecnico] [--aparelho fraco|medio|forte] [--saida pasta] [--rubrica rubrica.json] [--so-hero] [--tipo venda-direta|contato|cadastro|sistema] [--sair-zero]");
   process.exit(alvoArg ? 0 : 1);
 }
 
@@ -613,4 +613,4 @@ console.log("\n" + linhas.slice(0, 6 + portoes.length + 3).join("\n"));
 if (avisos.length) console.log("\nAvisos:\n- " + avisos.join("\n- "));
 console.log(`\nRelatório completo: ${path.join(saida, "relatorio.md")}`);
 console.log(total >= 100 ? "\n100. Pode entregar." : `\n${total}/100. Continua chicoteando.`);
-process.exitCode = total >= 100 ? 0 : 3;
+process.exitCode = total >= 100 || opt("sair-zero") ? 0 : 3;

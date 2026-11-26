@@ -10,7 +10,7 @@
   },
   "scripts": {
     "instalar": "node scripts/instalar.mjs",
-    "teste": "node scripts/chicotada.mjs exemplos/ruim.html --saida exemplos/saida-ruim; node scripts/chicotada.mjs exemplos/barbearia.html --publico geral --saida exemplos/saida-barbearia --rubrica exemplos/barbearia-rubrica.json; node scripts/chicotada.mjs exemplos/efeitos.html --publico jovem --aparelho forte --saida exemplos/saida-efeitos",
+    "teste": "node scripts/chicotada.mjs exemplos/ruim.html --saida exemplos/saida-ruim --sair-zero && node scripts/chicotada.mjs exemplos/barbearia.html --publico geral --saida exemplos/saida-barbearia --rubrica exemplos/barbearia-rubrica.json && node scripts/chicotada.mjs exemplos/efeitos.html --publico jovem --aparelho forte --saida exemplos/saida-efeitos --sair-zero",
     "medidas": "node scripts/medidas.mjs",
     "chicotada": "node scripts/chicotada.mjs",
     "pexels": "node scripts/pexels.mjs"
